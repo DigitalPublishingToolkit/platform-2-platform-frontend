@@ -13,6 +13,7 @@
 </script>
 
 <style lang="scss">
+    @import "../assets/style/global.scss";
     @import "../assets/style/variables.scss";
 
     .article {
