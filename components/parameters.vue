@@ -28,16 +28,14 @@
 <script>
     export default {
         name: "parameters",
-        data: {
-            showParameters: true
+        data() {
+            return {
+                showParameters: true
+            }
         },
         methods: {
-            toggleClass: function(event) {
-                if(this.showParameters) {
-                    this.showParameters = false;
-                } else {
-                    this.showParameters = true;
-                }
+            toggleClass: function() {
+                this.showParameters = !this.showParameters;
             }
         }
     }
@@ -52,16 +50,23 @@
         top: 0;
         left: 0;
         background-color: #7F828B;
-
+        transition: top 0.33s ease;
         &_placeholder {
             font-size: $font-size-s;
         }
-
         &_form {
             &--option {
                 float: left;
                 display: inline-block;
             }
         }
+    }
+
+    .show {
+        top: 0;
+    }
+
+    .hide {
+        top: -88px;
     }
 </style>
