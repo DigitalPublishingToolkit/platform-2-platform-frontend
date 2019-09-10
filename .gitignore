@@ -13,6 +13,9 @@ dist
 # Design files
 design
 
+# Webstorm
+.idea
+
 # General
 .DS_Store
 .AppleDouble
