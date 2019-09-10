@@ -8,7 +8,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "echo 'hIIIIIII'"
+    "generate": "nuxt generate'"
   },
   "dependencies": {
     "node-sass": "^4.12.0",
