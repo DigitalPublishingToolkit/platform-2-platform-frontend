@@ -1,18 +1,14 @@
 /* Typography */
-$font-stack: 'Lato', sans-serif;
+$font-stack: 'Roboto', helvetica, sans-serif;
+$font-size-l: 30px;
+$font-size: 15.5px;
+$font-size-s: 13px;
+$font-size-xs: 12px;
+$line-height: 1.3em;
 
-$line-height: 34px;
-$font-size: 28px;
-$line-height-s: 30px;
-$font-size-s: 24px;
-$line-height-xs: 22px;
-$font-size-xs: 16px;
-
-$light: 100;
-$regular: 300;
-$bold: 500;
-
-$border: 3px solid #fff;
+$light: 300;
+$regular: 400;
+$bold: 700;
 
 /* Color */
 $black: #000;
@@ -22,10 +18,8 @@ $theme-r: #c3d6c3;
 $theme-b: #c3c5d5;
 
 /* Space */
-$margin-sides: 40px;
-$margin-top: 20px;
-$parameter-show: 95px;
-$parameter-hide: 5px;
+$spacing: 18px;
+$parameter-size: 57px;
 
 /* Breakpoints */
 $breakpoints: (

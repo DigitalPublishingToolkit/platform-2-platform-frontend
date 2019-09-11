@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap&subset=latin-ext');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700&display=swap&subset=latin-ext');
 @import 'variables.scss';
 
 * {
@@ -6,6 +6,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: $font-stack;
+  line-height: $line-height;
 
   &::selection {
     background-color: rgba(255, 255, 255, 1);
