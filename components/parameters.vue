@@ -1,27 +1,27 @@
 <template>
-    <div class="parameters" v-bind:class="showParameters ? 'show' : 'hide'">
+    <div class="parameters">
 
         <p class="parameters_placeholder">Parameters for match criteria</p>
 
         <form action="" class="parameters_form">
             <div class="parameters_form--option">
                 <label for="title">Title</label>
-                <input type="checkbox" id="title" value="title" v-model="checkedParam">
+                <input type="checkbox" id="title" value="title" :checked="paramList.title" @click="toggle('title')">
             </div>
 
             <div class="parameters_form--option">
                 <label for="author">Author</label>
-                <input type="checkbox" id="author" value="author" v-model="checkedParam">
+                <input type="checkbox" id="author" value="author" :checked="paramList.author" @click="toggle('author')">
             </div>
 
             <div class="parameters_form--option">
                 <label for="tags">Tags</label>
-                <input type="checkbox" id="tags" value="tags" v-model="checkedParam">
+                <input type="checkbox" id="tags" value="tags" :checked="paramList.tags" @click="toggle('tags')">
             </div>
 
             <div class="parameters_form--option">
                 <label for="body">Body text</label>
-                <input type="checkbox" id="body" value="body" v-model="checkedParam">
+                <input type="checkbox" id="body" value="body" :checked="paramList.body" @click="toggle('body')">
             </div>
 
             <input class="parameters_form--submit" type="submit" value="Get Matches">
@@ -30,19 +30,25 @@
 </template>
 
 <script>
+    import { mapMutations } from 'vuex'
+
     export default {
         name: "parameters",
+        computed: {
+            paramList() {
+                return this.$store.state.parametersStore.listPar
+            }
+        },
         data() {
             return {
                 showParameters: true,
-                checkedParam: []
             }
         },
         methods: {
-            toggleClass: function() {
-                this.showParameters = !this.showParameters;
-            }
-        }
+            ...mapMutations({
+                toggle: 'parametersStore/toggleThis'
+            })
+        },
     }
 </script>
 
@@ -67,12 +73,16 @@
         left: 0;
 
         color: rgba(0, 0, 0, 1);
-        background-color: rgba(255, 255, 255, 1);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        background-color: rgba(127, 127, 255, 1);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         transition: top 0.33s ease;
+        z-index: 99;
 
         &_placeholder {
-            font-size: $font-size;
+            font-size: $font-size-s;
+            color: rgba(0, 0, 0, 0.4);
+            padding: $spacing/2;
+            /*font-size: $font-size;
             font-weight: $regular;
             display: inline-block;
 
@@ -80,15 +90,17 @@
 
             color: rgba(0, 0, 0, 0.6);
 
-            float: left;
+            float: left;*/
         }
         &_form {
             display: inline-block;
+            padding: 0 $spacing;
             &--option {
                 float: left;
                 display: inline-block;
 
-                margin: $spacing $spacing/2;
+                padding: $spacing/2 $spacing/2 $spacing*1.5 $spacing/2;
+                border-right: 1px solid rgba(0, 0, 0, 0.2);
             }
             &--submit {
                 font-family: $font-stack;
@@ -100,13 +112,12 @@
                 outline: none;
                 border-top: none;
                 border-bottom: none;
-                border-left: 1px solid rgba(0, 0, 0, 0.2);
+                border-left: none;
                 border-right: 1px solid rgba(0, 0, 0, 0.2);
 
                 display: inline-block;
 
-                padding: $spacing $spacing/2;
-                margin: 0 $spacing/2;
+                padding: $spacing/2 $spacing/2 $spacing*1.5 $spacing/2;
 
                 &:hover {
                     cursor: pointer;

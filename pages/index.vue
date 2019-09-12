@@ -4,15 +4,29 @@
             <div class="article--placeholder">
                 <p>Source Article</p><p class="lockScroll" v-bind:class="lockedScroll ? 'active' : 'inactive'" @click="lockedScroll = !lockedScroll">Sync scroll <span></span></p>
             </div>
-            <articleComp articleType="source" class="article--source"></articleComp>
+            <articleComp articleType="source" class="article--source" :articleTitle="sourceArticles.title"
+                         :articleUrl="sourceArticles.url"
+                         :articlePublisher="sourceArticles.publisher"
+                         :articleAuthor="sourceArticles.author"
+                         :articleTimestamp="sourceArticles.mod"
+                         :articleTags="sourceArticles.tags"
+                         :articleAbstract="sourceArticles.abstract"
+                         :articleBody="sourceArticles.body"></articleComp>
         </div>
         <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="handleScroll">
             <div class="article--placeholder">
                 <p>Matched Article</p>
             </div>
-            <articleComp articleType="match" class="article--match--1"></articleComp>
-            <!--            <article class="article--match--1"></article>-->
-            <!--            <article class="article--match--1"></article>-->
+            <articleComp articleType="match" class="article--match--1":articleTitle="matchArticles.title"
+                         :articleUrl="matchArticles.url"
+                         :articlePublisher="matchArticles.publisher"
+                         :articleAuthor="matchArticles.author"
+                         :articleTimestamp="matchArticles.mod"
+                         :articleTags="matchArticles.tags"
+                         :articleAbstract="matchArticles.abstract"
+                         :articleBody="matchArticles.body"></articleComp>
+<!--            <articleComp class="article&#45;&#45;match&#45;&#45;2"></articleComp>-->
+<!--            <articleComp class="article&#45;&#45;match&#45;&#45;2"></articleComp>-->
         </div>
     </div>
 </template>
@@ -28,16 +42,14 @@
         data() {
             return {
                 sourceArticles: {},
-                matchedArticles: [],
-                lockedScroll: true
+                matchArticles: {},
+                lockedScroll: true,
+                checkedParameters: []
             }
         },
         components: {
             articleComp,
             parameters
-        },
-        computed: {
-
         },
         methods: {
             handleScroll: function(e) {
@@ -51,15 +63,37 @@
                             break;
                     }
                 }
-                // console.log(e.target.classList);
             }
-        }
+        },
+        async asyncData ({query, error}) {
+            let sourceData = await axios.get("https://mhp.andrefincato.info/api/article/random");
+            let matchData = await axios.get("https://mhp.andrefincato.info/api/article/random");
+            return {
+                sourceArticles: sourceData.data[0],
+                matchArticles: matchData.data[0],
+            };
+        },
+        // async fetch ({ store, params }) {
+        //     await store.dispatch('articles/get_source');
+        // },
+        // computed: {
+        //     sourceArticles() {
+        //         return this.$store.state.sourceArticle
+        //     }
+        // },
+        //
         // asyncData () {
         //     return axios.get("https://mhp.andrefincato.info/api/article/random")
         //         .then((res) => {
-        //             this.sourceArticles = res.data;
+        //             console.log(res.data[0]);
+        //             return {sourceArticles: res.data[0]};
+        //         });
+        //     return axios.get("https://mhp.andrefincato.info/api/article/random")
+        //         .then((res) => {
+        //             console.log(res.data[0]);
+        //             return {matchArticles: res.data[0]};
         //         })
-        // }
+        // },
     }
 </script>
 
