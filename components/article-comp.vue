@@ -9,7 +9,7 @@
             </div>
         </div>
 
-        <div class="article--data article--data_title" v-bind:class="{requireY : paramList.title}">
+        <div class="article--data article--data_title" ref="titleEle" v-bind:class="{requireY : paramList.title}" v-bind:style="{ titleHeight: scrollLock}">
             <div class="article--data--placeholder">
                 <p>Title</p>
             </div>
@@ -82,6 +82,13 @@
 
     export default {
         name: "article-comp",
+        data() {
+            return {
+                titleHeight: {
+                    height: 'auto'
+                },
+            }
+        },
         props: [
             "articleType",
             "articleUrl",
@@ -91,11 +98,15 @@
             "articleTimestamp",
             "articleTags",
             "articleAbstract",
-            "articleBody"
+            "articleBody",
+            "scrollLock"
         ],
         computed: {
             paramList() {
                 return this.$store.state.parametersStore.listPar
+            },
+            biggestHeights() {
+                return this.$store.state.cellHeights.cellsBiggestHeights
             },
             sourceHeights() {
                 return this.$store.state.cellHeights.cellsSourceHeights
@@ -105,8 +116,19 @@
             }
         },
         mounted() {
-            console.log(document.getElementsByClassName("article--data_publisher")[0].clientHeight);
-            this.adjustH(this.articleType, "publisher", document.getElementsByClassName("article--data_publisher")[0].clientHeight);
+            const titleObj = {
+                arType: this.articleType,
+                key: "title",
+                heightEl: this.$refs.titleEle.clientHeight + 1
+            };
+
+            this.adjustH(titleObj);
+            this.titleHeight.height = this.biggestHeights.title + 'px'
+
+            // if(this.scrollLock) {
+            //     const biggestVal = Math.max(this.sourceHeights.title, this.matchHeights.title);
+            //     this.titleHeight = biggestVal  + 'px';
+            // }
         },
         methods: {
             ...mapMutations({

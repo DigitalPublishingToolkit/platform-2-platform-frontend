@@ -11,7 +11,8 @@
                          :articleTimestamp="sourceArticles.mod"
                          :articleTags="sourceArticles.tags"
                          :articleAbstract="sourceArticles.abstract"
-                         :articleBody="sourceArticles.body"></articleComp>
+                         :articleBody="sourceArticles.body"
+                         :scrollLock="lockedScroll"></articleComp>
         </div>
         <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="handleScroll">
             <div class="article--placeholder">
