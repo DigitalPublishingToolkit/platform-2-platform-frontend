@@ -9,7 +9,7 @@
             </div>
         </div>
 
-        <div class="article--data article--data_title" ref="titleEle" v-bind:class="{requireY : paramList.title}" v-bind:style="{ titleHeight: scrollLock}">
+        <div class="article--data article--data_title" ref="titleEle" v-bind:class="{requireY : paramList.title}" v-bind:style="{titleHeight: scrollLock}">
             <div class="article--data--placeholder">
                 <p>Title</p>
             </div>
@@ -85,7 +85,7 @@
         data() {
             return {
                 titleHeight: {
-                    height: 'auto'
+                    height: "auto" //this.biggestHeights.title
                 },
             }
         },
@@ -123,8 +123,7 @@
             };
 
             this.adjustH(titleObj);
-            this.titleHeight.height = this.biggestHeights.title + 'px'
-
+            // return this.biggestHeights.title + 'px'
             // if(this.scrollLock) {
             //     const biggestVal = Math.max(this.sourceHeights.title, this.matchHeights.title);
             //     this.titleHeight = biggestVal  + 'px';

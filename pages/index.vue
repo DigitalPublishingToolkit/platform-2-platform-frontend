@@ -40,6 +40,14 @@
     export default {
         name: "index",
         layout: "home",
+        async fetch({store}) {
+            await store.dispatch('articlesStore/get_source')
+        },
+        computed: {
+            sourceArticle() {
+                return this.$store.state.articlesStore.sourceArticle
+            }
+        },
         data() {
             return {
                 sourceArticles: {},
