@@ -4,36 +4,22 @@
             <div class="article--placeholder">
                 <p>Source Article</p><p class="lockScroll" v-bind:class="lockedScroll ? 'active' : 'inactive'" @click="lockedScroll = !lockedScroll">Sync scroll <span></span></p>
             </div>
-            <articleComp articleType="source" class="article--source" :articleTitle="sourceArticles.title"
-                         :articleUrl="sourceArticles.url"
-                         :articlePublisher="sourceArticles.publisher"
-                         :articleAuthor="sourceArticles.author"
-                         :articleTimestamp="sourceArticles.mod"
-                         :articleTags="sourceArticles.tags"
-                         :articleAbstract="sourceArticles.abstract"
-                         :articleBody="sourceArticles.body"
-                         :scrollLock="lockedScroll"></articleComp>
+            <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source" :scrollLock="lockedScroll"></articleComp>
         </div>
-        <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="handleScroll">
-            <div class="article--placeholder">
-                <p>Matched Article</p>
+        <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="handleScroll" v-bind:class="{noArticle : (storeMatchArticles().length === 0)}">
+            <div v-if="'title' in storeMatchArticles()[0].data" class="article--placeholder match-tabs">
+                <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index)}" v-bind:data="index" @click="updateView(index)">
+                    <p>Matched Article {{index + 1}}</p>
+                </div>
             </div>
-            <articleComp articleType="match" class="article--match--1":articleTitle="matchArticles.title"
-                         :articleUrl="matchArticles.url"
-                         :articlePublisher="matchArticles.publisher"
-                         :articleAuthor="matchArticles.author"
-                         :articleTimestamp="matchArticles.mod"
-                         :articleTags="matchArticles.tags"
-                         :articleAbstract="matchArticles.abstract"
-                         :articleBody="matchArticles.body"></articleComp>
-<!--            <articleComp class="article&#45;&#45;match&#45;&#45;2"></articleComp>-->
-<!--            <articleComp class="article&#45;&#45;match&#45;&#45;2"></articleComp>-->
+            <articleComp v-if="'title' in storeMatchArticles()[0].data" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" class="article--match article--match--1" v-bind:class="{active : match.onView}"></articleComp>
+            <div class="noArticle_placeholder" v-if="!('title' in storeMatchArticles()[0].data)">No matched articles…</div>
         </div>
     </div>
 </template>
 
 <script>
-    import axios from 'axios'
+    import { mapMutations } from 'vuex'
     import articleComp from "~/components/article-comp"
     import parameters from "~/components/parameters"
 
@@ -44,16 +30,17 @@
             await store.dispatch('articlesStore/get_source')
         },
         computed: {
-            sourceArticle() {
+            storeSourceArticle() {
                 return this.$store.state.articlesStore.sourceArticle
-            }
+            },
+            matchArticleOnView() {
+                return this.$store.state.articlesStore.matchArticleOnView
+            },
         },
         data() {
             return {
-                sourceArticles: {},
-                matchArticles: {},
                 lockedScroll: true,
-                checkedParameters: []
+                checkedParameters: [],
             }
         },
         components: {
@@ -61,6 +48,22 @@
             parameters
         },
         methods: {
+            ...mapMutations({
+                updateView: 'articlesStore/setOnview'
+            }),
+            // updateViewDeep(n) {
+            //
+            // },
+            // updateViewArticle() {
+            //     // const targetId = event.currentTarget.data
+            //     return this.$store.dispatch('articlesStore/updateViewArticle')
+            // },
+            getMatchArticles() {
+                return this.$store.dispatch('articlesStore/get_match')
+            },
+            storeMatchArticles() {
+                return this.$store.state.articlesStore.matchArticles
+            },
             handleScroll: function(e) {
                 if(this.lockedScroll) {
                     switch(e.currentTarget.classList[1]) {
@@ -74,35 +77,6 @@
                 }
             }
         },
-        async asyncData ({query, error}) {
-            let sourceData = await axios.get("https://mhp.andrefincato.info/api/article/random");
-            let matchData = await axios.get("https://mhp.andrefincato.info/api/article/random");
-            return {
-                sourceArticles: sourceData.data[0],
-                matchArticles: matchData.data[0],
-            };
-        },
-        // async fetch ({ store, params }) {
-        //     await store.dispatch('articles/get_source');
-        // },
-        // computed: {
-        //     sourceArticles() {
-        //         return this.$store.state.sourceArticle
-        //     }
-        // },
-        //
-        // asyncData () {
-        //     return axios.get("https://mhp.andrefincato.info/api/article/random")
-        //         .then((res) => {
-        //             console.log(res.data[0]);
-        //             return {sourceArticles: res.data[0]};
-        //         });
-        //     return axios.get("https://mhp.andrefincato.info/api/article/random")
-        //         .then((res) => {
-        //             console.log(res.data[0]);
-        //             return {matchArticles: res.data[0]};
-        //         })
-        // },
     }
 </script>
 
@@ -131,6 +105,10 @@
             }
             &--right {
                 right: 0;
+                transition: background-color 0.2s ease;
+                &.noArticle {
+                    background-color: rgba(0, 0, 0, 0.1);
+                }
             }
         }
 
@@ -144,6 +122,13 @@
         }
     }
 
+    .article--match {
+        display: none;
+        &.active {
+            display: block;
+        }
+    }
+
     .article--placeholder {
         font-size: $font-size-s;
         color: rgba(0, 0, 0, 0.6);
@@ -151,6 +136,25 @@
         position: fixed;
         width: 50%;
         background-color: rgba(255, 255, 255, 1);
+        transition: background-color 0.2s ease;
+        &.match-tabs {
+            display: flex;
+            flex-direction: row;
+            align-content: stretch;
+            align-items: stretch;
+            padding: 0;
+            & .tab {
+                padding: $spacing/2;
+                flex-grow: 1;
+                background-color: rgba(0, 0, 0, 0.1);
+                border-right: 1px solid rgba(0, 0, 0, 0.2);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                &.active {
+                    background-color: white;
+                    border-bottom: none;
+                }
+            }
+        }
         & p {
             display: inline-block;
             float: left;
@@ -183,5 +187,22 @@
                 margin-bottom: 1px;
             }
         }
+    }
+
+    .noArticle .article--placeholder {
+        background-color: transparent;
+    }
+
+    .noArticle_placeholder {
+        position: absolute;
+        width: 50%;
+        height: 18px;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        text-align: center;
+        color: rgba(0,0,0,0.2);
     }
 </style>
