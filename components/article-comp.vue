@@ -168,6 +168,11 @@
         margin-top: 33px;
         &--data {
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s linear;
+
+            &:hover {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            }
 
             &--placeholder {
                 font-size: $font-size-s;
@@ -204,6 +209,7 @@
                 &_title {
                     font-size: $font-size-l;
                     font-weight: 500;
+                    font-family: $font-stack-serif;
                 }
                 &_tags {
                     margin-bottom: $spacing*1.5-6;
@@ -218,9 +224,12 @@
                     }
                 }
                 &_abstract {
+                    line-height: 1.4em;
                 }
                 &_body {
                     & p {
+                        font-family: $font-stack-serif;
+                        line-height: 1.4em;
                         margin: 0 0 $line-height 0;
                     }
                 }
@@ -232,5 +241,8 @@
         background-color: rgba(255, 87, 67, 0.1);
         border-bottom: 1px solid rgba(255, 87, 67, 0.5);
         transition: background-color 0.2s linear;
+        & .article--data--placeholder {
+            color: $red;
+        }
     }
 </style>

@@ -84,10 +84,16 @@
     @import "../assets/style/global.scss";
     @import "../assets/style/variables.scss";
 
+    .divider_bar {
+        position: absolute;
+        height: 3px;
+        background-color: rgba(49, 49, 49, 1);
+    }
+
     .main_articles {
         position: absolute;
         /*overflow: auto;*/
-        top: $parameter-size;
+        top: 3px;
         left: 0;
         right: 0;
         bottom: 0;
@@ -114,7 +120,7 @@
 
         &::after {
             content: '';
-            border-left: 1px solid rgba(0, 0, 0, 0.1);
+            border-left: 1px solid $charcoal;
             position: absolute;
             top: 0;
             bottom: 0;
@@ -146,12 +152,21 @@
             & .tab {
                 padding: $spacing/2;
                 flex-grow: 1;
-                background-color: rgba(0, 0, 0, 0.1);
-                border-right: 1px solid rgba(0, 0, 0, 0.2);
+                background-color: $charcoal;
+                color: $white;
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
                 border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                &:last-of-type {
+                    border-right: none;
+                }
                 &.active {
-                    background-color: white;
+                    background-color: $white;
                     border-bottom: none;
+                    color: $black;
+                    cursor: default !important;
+                }
+                &:hover {
+                    cursor: pointer;
                 }
             }
         }

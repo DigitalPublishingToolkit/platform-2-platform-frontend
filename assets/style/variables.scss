@@ -1,6 +1,7 @@
 /* Typography */
-$font-stack: 'Roboto', helvetica, sans-serif;
-$font-size-l: 30px;
+$font-stack-sans: 'Roboto', helvetica, sans-serif;
+$font-stack-serif: 'Georgia', serif;
+$font-size-l: 36px;
 $font-size: 15.5px;
 $font-size-s: 13px;
 $font-size-xs: 12px;
@@ -13,7 +14,8 @@ $bold: 700;
 /* Color */
 $black: #000;
 $white: #fff;
-$fullRed: rgba(255, 77 , 47, 1);
+$red: rgba(255, 87, 67, 1);
+$charcoal: rgba(49, 49, 49, 1);
 
 /* Space */
 $spacing: 18px;

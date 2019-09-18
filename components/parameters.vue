@@ -1,41 +1,61 @@
 <template>
     <div class="parameters">
-        <div class="top_divider"></div>
 
         <div class="parameters_column parameters_column--left">
-            <p class="placeholder">Match Parameters</p>
+            <div class="parameters_column--field field-checkboxes">
+                <p class="placeholder">Select criteria for match</p>
 
-            <form action="" class="parameters_form">
-                <div class="parameters_form--option" v-bind:class="{active : paramList.title}">
-                    <label for="title">Title</label>
-                    <input type="checkbox" id="title" value="title" :checked="paramList.title" @click="toggle('title')">
-                </div>
+                <form action="" class="parameters_form">
+                    <div class="parameters_form--option" v-bind:class="{active : paramList.title}">
+                        <label for="title">Title</label>
+                        <input type="checkbox" id="title" value="title" :checked="paramList.title" @click="toggle('title')">
+                    </div>
 
-                <div class="parameters_form--option" v-bind:class="{active : paramList.author}">
-                    <label for="author">Author</label>
-                    <input type="checkbox" id="author" value="author" :checked="paramList.author" @click="toggle('author')">
-                </div>
+                    <div class="parameters_form--option" v-bind:class="{active : paramList.author}">
+                        <label for="author">Author</label>
+                        <input type="checkbox" id="author" value="author" :checked="paramList.author" @click="toggle('author')">
+                    </div>
 
-                <div class="parameters_form--option" v-bind:class="{active : paramList.tags}">
-                    <label for="tags">Tags</label>
-                    <input type="checkbox" id="tags" value="tags" :checked="paramList.tags" @click="toggle('tags')">
-                </div>
+                    <div class="parameters_form--option" v-bind:class="{active : paramList.tags}">
+                        <label for="tags">Tags</label>
+                        <input type="checkbox" id="tags" value="tags" :checked="paramList.tags" @click="toggle('tags')">
+                    </div>
 
-                <div class="parameters_form--option" v-bind:class="{active : paramList.body}">
-                    <label for="body">Body text</label>
-                    <input type="checkbox" id="body" value="body" :checked="paramList.body" @click="toggle('body')">
-                </div>
-            </form>
-            <div class="parameters_form--submit" @click="getMatchArticles()">Get Matches</div>
-        </div>
-        <div class="parameters_column parameters_column--right">
-            <p class="placeholder">Score rating</p>
-
-            <div class="score_rating">
-                <span v-if="Number.isInteger(matchArticleOnView)">{{Number.parseFloat(storeMatchArticles()[matchArticleOnView].data.score*100).toFixed(2)}}%</span>
-                <span v-else>0</span>
+                    <div class="parameters_form--option" v-bind:class="{active : paramList.body}">
+                        <label for="body">Body text</label>
+                        <input type="checkbox" id="body" value="body" :checked="paramList.body" @click="toggle('body')">
+                    </div>
+                </form>
+            </div>
+            <div class="parameters_column--field field-getmatch">
+                <p class="placeholder">Get new matches</p>
+                <div class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get Matches</div>
             </div>
         </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="parameters_column parameters_column--right">
+            <div class="parameters_column--field field-score">
+                <p class="placeholder">Score rating</p>
+                <div class="score_rating">
+                    <span v-if="Number.isInteger(matchArticleOnView)">{{Number.parseFloat(storeMatchArticles()[matchArticleOnView].data.score*100).toFixed(2)}}%</span>
+                    <span v-else>0</span>
+                </div>
+            </div>
+
+            <div class="parameters_column--field field-scrollsync">
+                <p class="placeholder">Synced scrolling</p>
+                <div class="parameters_button" @click="getMatchArticles()">Synced scrolling on</div>
+            </div>
+
+            <div class="parameters_column--field field-matchmaking">
+                <p class="placeholder">Match or no match</p>
+                <div class="parameters_button parameters_matchmaking--yes" @click="getMatchArticles()">Yes, it is</div>
+                <span class="divider-slash">/</span>
+                <div class="parameters_button parameters_matchmaking--no" @click="getMatchArticles()">No, it's not</div>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -75,14 +95,8 @@
     @import "../assets/style/global.scss";
     @import "../assets/style/variables.scss";
 
-    .top_divider {
-        height: 9px;
-        width: 100%;
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
     .parameters {
-        font-family: $font-stack;
+        font-family: $font-stack-sans;
         font-size: $font-size;
         line-height: $line-height;
         font-weight: $regular;
@@ -90,45 +104,58 @@
         /*letter-spacing: 0.1px;*/
 
         width: 100%;
-        height: $parameter-size;
+        height: auto;
 
         position: fixed;
 
-        top: 0;
+        bottom: 0;
         left: 0;
 
-        color: rgba(0, 0, 0, 1);
-        background-color: $fullRed;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        transition: top 0.33s ease;
+        color: rgba(0, 0, 0, 0.1);
+        background-color: $white;
+        border-top: 1px solid $charcoal;
         z-index: 99;
 
         & .parameters_column {
             width: 50%;
-            display: inline-block;
+            display: flex;
+            align-items: stretch;
+
             &--left {
                 box-sizing: content-box;
                 border-right: 1px solid rgba(0, 0, 0, 0.1);
                 float: left;
+                & .parameters_column--field {
+                    &.field-checkboxes {
+                        flex-grow: 2;
+                        border-right: 1px solid rgba(0, 0, 0, 0.1);
+                    }
+                    &.field-getmatch {
+                        flex-grow: 1;
+                    }
+                }
             }
             &--right {
                 float: right;
                 margin-left: -1px;
-                & .score_rating {
-                    height: 38px;
-                    margin: 9px;
-                    /* display: block; */
-                    /* position: absolute; */
-                    overflow: hidden;
-                    color: rgba(255, 255, 255, 1);
-                    font-weight: 300;
-                    & span {
-                        font-size: 46.5px;
-                        /* line-height: 1em; */
-                        /* vertical-align: text-top; */
-                        margin-top: -11px;
-                        padding-left: 18px;
-                        display: block;
+                & .parameters_column--field {
+                    flex-grow: 1;
+                    border-right: 1px solid rgba(0, 0, 0, 0.1);
+                    &:last-of-type {
+                        border-right: none;
+                    }
+                    & .score_rating {
+                        /* display: block; */
+                        /* position: absolute; */
+                        font-weight: 300;
+                        & span {
+                            font-size: $font-size-l;
+                            line-height: 46px;
+                            margin: 0 0 0 $spacing*1.5;
+                            background-color: rgba(0,0,0,0.1);
+                            padding: 2px;
+                            border-radius: 2px;
+                        }
                     }
                 }
             }
@@ -137,27 +164,31 @@
         & .placeholder {
             font-size: $font-size-s;
             color: rgba(0, 0, 0, 0.4);
-            padding: $spacing/2;
+            padding: $spacing $spacing/2 $spacing/2 $spacing/2;
         }
         &_form {
             display: inline-block;
-            padding: 0 $spacing $spacing $spacing;
+            padding: 0 0 $spacing $spacing*1.5;
             &--option {
+                font-weight: 300;
                 float: left;
                 display: inline-block;
-                color: white;
-                margin: $spacing/2 $spacing/2 $spacing/2 $spacing/2;
-                padding: $spacing/2;
-                background-color: rgba(255, 255, 255, 0.2);
-                border-radius: 4px;
-                /*border: 1px solid rgba(255, 255, 255, 1);*/
+                color: $black;
+                margin: 0 $spacing*1.5 0 0;
+                padding: 0;
+                /*background-color: rgba(255, 255, 255, 0.2);*/
+                border-radius: 0;
+                font-size: 20px;
+                line-height: 46px;
+                border-bottom: 1px solid rgba(49, 49, 49, 1);
                 &.active {
-                    background-color: $fullRed;
-                    box-shadow: 0px 0px 0px 4px rgba(255, 255, 255, 0.4);
+                    border-bottom: 1px solid $red;
+                    color: $red;
+                    /*box-shadow: 0px 0px 0px 4px rgba(255, 255, 255, 0.4);*/
                 }
                 &:hover {
                     cursor: pointer;
-                    background-color: $fullRed;
+                    background-color: rgba(0, 0, 0, 0.1);
                     box-shadow: 0px 0px 0px 4px rgba(255, 255, 255, 0.4);
                     & * {
                         cursor: pointer;
@@ -167,33 +198,35 @@
                     margin-right: 2px;
                 }
             }
-            &--submit {
-                font-family: $font-stack;
-                font-size: $font-size;
-                line-height: $line-height;
-                font-weight: 500;
+        }
+    }
 
-                background-color: rgba(255, 255, 255, 1);
-                outline: none;
-                border-top: none;
-                border-bottom: none;
-                border-left: none;
-                border-right: none;
+    .parameters_button {
+        font-family: $font-stack-sans;
+        font-size: 20px;
+        line-height: 46px;
+        font-weight: 300;
 
-                display: inline-block;
+        background-color: transparent;
+        outline: none;
+        border-top: none;
+        border-bottom: none;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+        display: inline-block;
 
-                padding: $spacing/2;
-                margin: $spacing/2 $spacing*1.5;
+        margin: 0 0 $spacing $spacing*1.5;
 
-                border-radius: 4px;
+        border-bottom: 1px solid rgba(49, 49, 49, 1);
 
-                float: right;
+        &:hover {
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
 
-                &:hover {
-                    cursor: pointer;
-                    color: rgba(255, 127, 127, 1);
-                }
-            }
+        &.parameters_matchmaking--no {
+            margin-left: 0;
         }
     }
 
@@ -203,5 +236,14 @@
 
     .hide {
         top: -88px;
+    }
+
+    .parameters_column--field {
+        flex: 1 0;
+    }
+
+    .divider-slash {
+        width: 9px;
+        margin: 0 18px;
     }
 </style>
