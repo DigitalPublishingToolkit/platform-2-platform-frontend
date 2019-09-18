@@ -9,6 +9,6 @@
   line-height: $line-height;
 
   &::selection {
-    background-color: $red;
+    background-color: rgba(0, 0, 0, 0.2);
   }
 }

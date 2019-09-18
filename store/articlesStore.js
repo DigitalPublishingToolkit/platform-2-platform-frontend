@@ -7,14 +7,17 @@ const state = () => ({
     matchArticles: [
         {
             onView: true,
+            isMatch: '',
             data: {}
         },
         {
             onView: false,
+            isMatch: '',
             data: {}
         },
         {
             onView: false,
+            isMatch: '',
             data: {}
         }
     ],
@@ -67,6 +70,22 @@ const actions = {
             commit('set_matchAr', res.data)
         })
     },
+    async confirm_match ({ commit, state }) {
+        await axios.post('https://mhp.andrefincato.info/api/send', {
+            inputs_title: state.sourceArticle.title,
+            inputs_publisher: state.sourceArticle.publisher,
+            match_title: state.matchArticles[state.matchArticleOnView].data.title,
+            match_publisher: state.matchArticles[state.matchArticleOnView].data.publisher,
+            score: state.matchArticles[state.matchArticleOnView].data.score,
+            timestamp: new Date().toISOString()
+        }).then((res) => {
+            console.log(res);
+            commit('set_ConfirmMatch', res.data)
+        })
+    },
+    deny_match({ commit, state }) {
+        commit('set_denyMatch')
+    }
     // updateViewArticle({ commit }, n) {
     //     console.log(n);
     //     commit('set_onview', n)
@@ -74,6 +93,10 @@ const actions = {
 }
 
 const mutations = {
+    set_ConfirmMatch (state, data) {
+        alert("The articles " + state.sourceArticle.title.toUpperCase() + " and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are a good match.");
+        state.matchArticles[state.matchArticleOnView].isMatch = true
+    },
     set_sourceAr (state, data) {
         state.sourceArticle = data
     },
@@ -86,6 +109,10 @@ const mutations = {
         state.matchArticles[0].data = data[0];
         state.matchArticles[1].data = data[1];
         state.matchArticles[2].data = data[2];
+    },
+    set_denyMatch (state, data) {
+        alert("The articles " + state.sourceArticle.title.toUpperCase() + "and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are not a good match.");
+        state.matchArticles[state.matchArticleOnView].isMatch = false
     },
     toggleThis(state, param) {
         state.listPar[param] = !state.listPar[param]

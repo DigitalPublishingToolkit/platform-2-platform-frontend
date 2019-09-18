@@ -12,7 +12,7 @@
                     <p>Matched Article {{index + 1}}</p>
                 </div>
             </div>
-            <articleComp v-if="'title' in storeMatchArticles()[0].data" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" class="article--match article--match--1" v-bind:class="{active : match.onView}"></articleComp>
+            <articleComp v-if="'title' in storeMatchArticles()[0].data" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" :isMatch="match.isMatch" class="article--match article--match--1" v-bind:class="{active : match.onView}"></articleComp>
             <div class="noArticle_placeholder" v-if="!('title' in storeMatchArticles()[0].data)">No matched articles…</div>
         </div>
     </div>

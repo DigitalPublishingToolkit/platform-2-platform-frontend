@@ -54,9 +54,10 @@
 
             <div class="parameters_column--field field-matchmaking">
                 <p class="placeholder">Match or no match</p>
-                <div class="parameters_button parameters_matchmaking--yes" @click="getMatchArticles()">Yes, it is</div>
-                <span class="divider-slash">/</span>
-                <div class="parameters_button parameters_matchmaking--no" @click="getMatchArticles()">No, it's not</div>
+<!--                    !storeMatchArticles()[matchArticleOnView].isMatch-->
+                    <div class="parameters_button parameters_matchmaking--yes" @click="setMatchArticle()">Yes, it is</div>
+                    <span class="divider-slash">/</span>
+                    <div class="parameters_button parameters_matchmaking--no" @click="unSetMatchArticle()">No, it's not</div>
             </div>
         </div>
 
@@ -90,6 +91,12 @@
             },
             storeMatchArticles() {
                 return this.$store.state.articlesStore.matchArticles
+            },
+            setMatchArticle() {
+                return this.$store.dispatch('articlesStore/confirm_match')
+            },
+            unSetMatchArticle() {
+                return this.$store.dispatch('articlesStore/deny_match')
             },
             ...mapMutations({
                 toggle: 'articlesStore/toggleThis',
@@ -258,12 +265,32 @@
     }
 
     .active {
-        color: green;
-        border-bottom: 2px solid green;
+        color: $green;
+        border-bottom: 2px solid $green;
     }
 
     .score_rating--noarticle {
         color: rgba(0, 0, 0, 0.2);
+    }
+
+    .parameters_matchmaking--matchconfirm {
+        font-family: $font-stack-sans;
+        font-size: 20px;
+        line-height: 46px;
+        font-weight: 300;
+        background-color: transparent;
+        outline: none;
+        border-top: none;
+        border-bottom: none;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+        display: inline-block;
+        margin: 0 0 $spacing $spacing*1.5;
+        border-bottom: 2px solid rgba(49, 49, 49, 1);
+
+        color: rgba(0, 0, 0, 0.2);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.2);
     }
 
 </style>

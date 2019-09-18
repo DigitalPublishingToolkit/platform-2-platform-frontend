@@ -10,6 +10,7 @@
         </div>
 
         <div class="article--data article--data_title" ref="titleEle" v-bind:class="{requireY : paramList.title}" v-bind:style="{height: 'auto'}">
+        <!--yesMatch : storeMatchArticles()[matchArticleOnView].isMatch-->
             <div class="article--data--placeholder">
                 <p>Title</p>
                 <svg class="console-carret" v-if="paramList.title" width="8" height="7" viewBox="0 -50 30 25">
@@ -95,7 +96,8 @@
         props: [
             "articleType",
             "articleInd",
-            "articleData"
+            "articleData",
+            "isMatch"
         ],
         data() {
             return {
@@ -117,12 +119,26 @@
             biggestHeights() {
                 return this.$store.state.cellHeights.largestHeights
             },
+            matchArticleOnView() {
+                return this.$store.state.articlesStore.matchArticleOnView
+            },
         },
         mounted() {
             console.log(this.$refs.titleEle.clientHeight);
             this.adjustH({key: 'title', amount: this.$refs.titleEle.clientHeight + 1});
         },
         methods: {
+            checkIfMatch() {
+                if(isNaN(matchArticleOnView)) {
+                    return false
+                }
+                // if(storeMatchArticles()[matchArticleOnView].isMatch) {
+                //
+                // }
+            },
+            storeMatchArticles() {
+                return this.$store.state.articlesStore.matchArticles
+            },
             getRightMatchArticle: function(index) {
                 switch(index) {
                     case 0:
@@ -262,8 +278,21 @@
         background-color: rgba(255, 87, 67, 0.1);
         border-bottom: 1px solid rgba(255, 87, 67, 0.5);
         transition: background-color 0.2s linear;
+        & .article--data--content_tags_tag {
+            background-color: rgba(255, 87, 67, 0.6);
+        }
         & .article--data--placeholder {
             color: $red;
+        }
+        &.yesMatch {
+            background-color: rgba(67, 207, 27, 0.1);
+            border-bottom: 1px solid rgba(67, 207, 27, 0.5);
+            & .article--data--placeholder {
+                color: $green;
+                & svg {
+                    fill: $green;
+                }
+            }
         }
     }
 </style>
