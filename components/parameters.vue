@@ -29,7 +29,10 @@
             </div>
             <div class="parameters_column--field field-getmatch">
                 <p class="placeholder">Get new matches</p>
-                <div class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get Matches</div>
+                <div v-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (!storeMatchArticles()[0].data.hasOwnProperty('title'))" class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get Matches</div>
+                <div v-else-if="!storeMatchArticles()[0].data.hasOwnProperty('title')" class="parameters_button parameters_form--submit--noparams">Get Matches</div>
+                <div v-else-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (storeMatchArticles()[0].data.hasOwnProperty('title'))" class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get new pool ↺</div>
+                <div v-else class="parameters_button parameters_form--submit--noparams">Get new pool ↺</div>
             </div>
         </div>
 
@@ -39,13 +42,14 @@
                 <p class="placeholder">Score rating</p>
                 <div class="score_rating">
                     <span v-if="Number.isInteger(matchArticleOnView)">{{Number.parseFloat(storeMatchArticles()[matchArticleOnView].data.score*100).toFixed(2)}}%</span>
-                    <span v-else>0</span>
+                    <span class="score_rating--noarticle" v-else>-.--</span>
                 </div>
             </div>
 
             <div class="parameters_column--field field-scrollsync">
                 <p class="placeholder">Synced scrolling</p>
-                <div class="parameters_button" @click="getMatchArticles()">Synced scrolling on</div>
+                <div class="parameters_button active" v-if="scrollLock" @click="lockedScroll">Synced scrolling on</div>
+                <div class="parameters_button inactive" v-else @click="lockedScroll">Synced scrolling off</div>
             </div>
 
             <div class="parameters_column--field field-matchmaking">
@@ -65,6 +69,9 @@
     export default {
         name: "parameters",
         computed: {
+            scrollLock() {
+                return this.$store.state.articlesStore.scrollLock
+            },
             paramList() {
                 return this.$store.state.articlesStore.listPar
             },
@@ -85,7 +92,8 @@
                 return this.$store.state.articlesStore.matchArticles
             },
             ...mapMutations({
-                toggle: 'articlesStore/toggleThis'
+                toggle: 'articlesStore/toggleThis',
+                lockedScroll: 'articlesStore/changeLockedScroll'
             })
         },
     }
@@ -100,18 +108,11 @@
         font-size: $font-size;
         line-height: $line-height;
         font-weight: $regular;
-        /*text-transform: uppercase;*/
-        /*letter-spacing: 0.1px;*/
-
         width: 100%;
-        height: auto;
-
+        height: $parameter-size;
         position: fixed;
-
         bottom: 0;
         left: 0;
-
-        color: rgba(0, 0, 0, 0.1);
         background-color: $white;
         border-top: 1px solid $charcoal;
         z-index: 99;
@@ -120,11 +121,13 @@
             width: 50%;
             display: flex;
             align-items: stretch;
+            background-color: rgba(0, 0, 0, 0.05);
 
             &--left {
                 box-sizing: content-box;
                 border-right: 1px solid rgba(0, 0, 0, 0.1);
                 float: left;
+
                 & .parameters_column--field {
                     &.field-checkboxes {
                         flex-grow: 2;
@@ -135,19 +138,22 @@
                     }
                 }
             }
+
             &--right {
                 float: right;
                 margin-left: -1px;
+
                 & .parameters_column--field {
                     flex-grow: 1;
                     border-right: 1px solid rgba(0, 0, 0, 0.1);
+
                     &:last-of-type {
                         border-right: none;
                     }
+
                     & .score_rating {
-                        /* display: block; */
-                        /* position: absolute; */
                         font-weight: 300;
+
                         & span {
                             font-size: $font-size-l;
                             line-height: 46px;
@@ -180,16 +186,15 @@
                 border-radius: 0;
                 font-size: 20px;
                 line-height: 46px;
-                border-bottom: 1px solid rgba(49, 49, 49, 1);
+                border-bottom: 2px solid rgba(49, 49, 49, 1);
                 &.active {
-                    border-bottom: 1px solid $red;
+                    border-bottom: 2px solid $red;
                     color: $red;
                     /*box-shadow: 0px 0px 0px 4px rgba(255, 255, 255, 0.4);*/
                 }
                 &:hover {
                     cursor: pointer;
                     background-color: rgba(0, 0, 0, 0.1);
-                    box-shadow: 0px 0px 0px 4px rgba(255, 255, 255, 0.4);
                     & * {
                         cursor: pointer;
                     }
@@ -202,11 +207,11 @@
     }
 
     .parameters_button {
+        color: $black;
         font-family: $font-stack-sans;
         font-size: 20px;
         line-height: 46px;
         font-weight: 300;
-
         background-color: transparent;
         outline: none;
         border-top: none;
@@ -215,18 +220,23 @@
         border-right: none;
         border-radius: 0;
         display: inline-block;
-
         margin: 0 0 $spacing $spacing*1.5;
-
-        border-bottom: 1px solid rgba(49, 49, 49, 1);
-
+        border-bottom: 2px solid rgba(49, 49, 49, 1);
         &:hover {
             cursor: pointer;
             background-color: rgba(0, 0, 0, 0.1);
         }
-
         &.parameters_matchmaking--no {
             margin-left: 0;
+        }
+    }
+
+    .parameters_form--submit--noparams {
+        color: rgba(0, 0, 0, 0.2);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+        &:hover {
+            background-color: transparent;
+            cursor: default;
         }
     }
 
@@ -246,4 +256,14 @@
         width: 9px;
         margin: 0 18px;
     }
+
+    .active {
+        color: green;
+        border-bottom: 2px solid green;
+    }
+
+    .score_rating--noarticle {
+        color: rgba(0, 0, 0, 0.2);
+    }
+
 </style>

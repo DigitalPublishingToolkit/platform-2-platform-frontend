@@ -12,6 +12,12 @@
         <div class="article--data article--data_title" ref="titleEle" v-bind:class="{requireY : paramList.title}" v-bind:style="{height: 'auto'}">
             <div class="article--data--placeholder">
                 <p>Title</p>
+                <svg class="console-carret" v-if="paramList.title" width="8" height="7" viewBox="0 -50 30 25">
+                    <path d="M29.941406 -52.500000C29.785156 -52.656250 29.589844 -52.753906 29.355469 -52.792969L0.644531 -52.792969C0.410156 -52.753906 0.214844 -52.656250 0.058594 -52.500000C-0.019531 -52.265625 0.000000 -52.050781 0.117188 -51.855469L14.472656 -27.890625C14.628906 -27.734375 14.804688 -27.636719 15.000000 -27.597656C15.234375 -27.636719 15.410156 -27.734375 15.527344 -27.890625L29.882812 -51.855469C30.000000 -52.089844 30.019531 -52.304688 29.941406 -52.500000ZM29.941406 -52.500000"></path>
+                </svg>
+                <div v-if="showConsole.title" class="console">
+
+                </div>
             </div>
             <div class="article--data--content article--data--content_title">
                 {{articleData.title}}
@@ -66,9 +72,6 @@
         <div class="article--data article--data_body" v-bind:class="{requireY : paramList.body}">
             <div class="article--data--placeholder">
                 <p>Body</p>
-                <svg width="8" height="7" viewBox="0 -50 30 25">
-                    <path d="M29.941406 -52.500000C29.785156 -52.656250 29.589844 -52.753906 29.355469 -52.792969L0.644531 -52.792969C0.410156 -52.753906 0.214844 -52.656250 0.058594 -52.500000C-0.019531 -52.265625 0.000000 -52.050781 0.117188 -51.855469L14.472656 -27.890625C14.628906 -27.734375 14.804688 -27.636719 15.000000 -27.597656C15.234375 -27.636719 15.410156 -27.734375 15.527344 -27.890625L29.882812 -51.855469C30.000000 -52.089844 30.019531 -52.304688 29.941406 -52.500000ZM29.941406 -52.500000"></path>
-                </svg>
             </div>
             <div v-if="articleType === 'source'" class="article--data--content article--data--content_body">
                 <p class="article--data--content_body_paragraph" v-for="item in sourceBodyTextArray()">
@@ -92,10 +95,22 @@
         props: [
             "articleType",
             "articleInd",
-            "scrollLock",
             "articleData"
         ],
+        data() {
+            return {
+                showConsole: {
+                    title: false,
+                    author: false,
+                    tags: false,
+                    body: false,
+                }
+            }
+        },
         computed: {
+            scrollLock() {
+                return this.$store.state.articlesStore.scrollLock
+            },
             paramList() {
                 return this.$store.state.articlesStore.listPar
             },
@@ -183,8 +198,14 @@
                 }
                 & svg {
                     display: inline-block;
-                    fill: rgba(0, 0, 0, 0.3);
+                    fill: $red;
                     margin-left: 1px;
+                    transform: rotate(-90deg);
+                    transition: transform 0.2s linear;
+                    &:hover {
+                        margin-left: 3px;
+                        transform: rotate(0deg);
+                    }
                 }
             }
             &--content {

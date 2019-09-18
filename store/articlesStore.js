@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const state = () => ({
+    scrollLock: true,
     sourceArticle: {},
     matchArticleOnView: '',
     matchArticles: [
@@ -75,6 +76,9 @@ const actions = {
 const mutations = {
     set_sourceAr (state, data) {
         state.sourceArticle = data
+    },
+    changeLockedScroll (state) {
+        state.scrollLock = !state.scrollLock
     },
     set_matchAr (state, data) {
         // console.log(data)

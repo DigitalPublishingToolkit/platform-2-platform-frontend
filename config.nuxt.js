@@ -3,7 +3,7 @@ module.exports = {
     head: {
         title: 'Making it Public',
         meta: [
-            { charset: 'utf-8' },
+            { charset: 'ANSI' },
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
             { hid: 'description', name: 'description', content: 'Making it Public comparison tool by Institute of Network cultures' }
         ],

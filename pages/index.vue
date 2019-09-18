@@ -2,9 +2,9 @@
     <div class="main_articles">
         <div id="left-column" class="main_articles_column main_articles_column--left" v-on:scroll="handleScroll">
             <div class="article--placeholder">
-                <p>Source Article</p><p class="lockScroll" v-bind:class="lockedScroll ? 'active' : 'inactive'" @click="lockedScroll = !lockedScroll">Sync scroll <span></span></p>
+                <p>Source Article</p>
             </div>
-            <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source" :scrollLock="lockedScroll"></articleComp>
+            <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source"></articleComp>
         </div>
         <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="handleScroll" v-bind:class="{noArticle : (storeMatchArticles().length === 0)}">
             <div v-if="'title' in storeMatchArticles()[0].data" class="article--placeholder match-tabs">
@@ -30,6 +30,9 @@
             await store.dispatch('articlesStore/get_source')
         },
         computed: {
+            scrollLock() {
+                return this.$store.state.articlesStore.scrollLock
+            },
             storeSourceArticle() {
                 return this.$store.state.articlesStore.sourceArticle
             },
@@ -39,7 +42,6 @@
         },
         data() {
             return {
-                lockedScroll: true,
                 checkedParameters: [],
             }
         },
@@ -49,7 +51,8 @@
         },
         methods: {
             ...mapMutations({
-                updateView: 'articlesStore/setOnview'
+                updateView: 'articlesStore/setOnview',
+                lockedScroll: 'articlesStore/changeLockedScroll'
             }),
             // updateViewDeep(n) {
             //
@@ -65,7 +68,7 @@
                 return this.$store.state.articlesStore.matchArticles
             },
             handleScroll: function(e) {
-                if(this.lockedScroll) {
+                if(this.scrollLock) {
                     switch(e.currentTarget.classList[1]) {
                         case("main_articles_column--left"):
                             document.getElementById("right-column").scrollTop = e.target.scrollTop;
@@ -96,7 +99,7 @@
         top: 3px;
         left: 0;
         right: 0;
-        bottom: 0;
+        bottom: $parameter-size;
         background-color: rgba(255, 255, 255, 1);
 
         &_column {
