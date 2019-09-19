@@ -49,6 +49,11 @@
             articleComp,
             parameters
         },
+        // mounted() {
+        //     this.$nextTick(() => {
+        //         return this.$store.dispatch('articlesStore/get_source')
+        //     })
+        // },
         methods: {
             ...mapMutations({
                 updateView: 'articlesStore/setOnview',
