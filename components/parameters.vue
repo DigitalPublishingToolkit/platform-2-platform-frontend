@@ -59,8 +59,8 @@
 
             <div class="parameters_column--field field-scrollsync">
                 <p class="placeholder">Synced scrolling</p>
-                <div class="parameters_button active" v-if="scrollLock" @click="lockedScroll">Toggle synced scroll</div>
-                <div class="parameters_button inactive" v-else @click="lockedScroll">Toggle synced scroll</div>
+                <div class="parameters_button active" v-if="scrollLock" @click="lockedScroll">Toggle sync off</div>
+                <div class="parameters_button inactive" v-else @click="lockedScroll">Toggle sync on</div>
             </div>
 
             <div class="parameters_column--field field-matchmaking">
