@@ -1,6 +1,17 @@
 <template>
     <div class="parameters">
-
+        <div class="popup-wrapper" v-if="isMatch === true" @click="isMatch = null">
+            <div class="popup">
+                Thank you. <br><br>
+                <strong>{{storeSourceArticle.title}}</strong> and <strong>{{storeMatchArticles()[matchArticleOnView].data.title}}</strong> are saved as a match.
+            </div>
+        </div>
+        <div class="popup-wrapper" v-if="isMatch === false" @click="isMatch = null">
+            <div class="popup">
+                Thank you. <br><br>
+                <strong>{{storeSourceArticle.title}}</strong> and <strong>{{storeMatchArticles()[matchArticleOnView].data.title}}</strong> are saved as not a match.
+            </div>
+        </div>
         <div class="parameters_column parameters_column--left">
             <div class="parameters_column--field field-checkboxes">
                 <p class="placeholder">Select criteria for match</p>
@@ -48,16 +59,23 @@
 
             <div class="parameters_column--field field-scrollsync">
                 <p class="placeholder">Synced scrolling</p>
-                <div class="parameters_button active" v-if="scrollLock" @click="lockedScroll">Toggle synced scroll off</div>
-                <div class="parameters_button inactive" v-else @click="lockedScroll">Toggle synced scroll on</div>
+                <div class="parameters_button active" v-if="scrollLock" @click="lockedScroll">Toggle synced scroll</div>
+                <div class="parameters_button inactive" v-else @click="lockedScroll">Toggle synced scroll</div>
             </div>
 
             <div class="parameters_column--field field-matchmaking">
                 <p class="placeholder">Match or no match</p>
 <!--                    !storeMatchArticles()[matchArticleOnView].isMatch-->
-                    <div class="parameters_button parameters_matchmaking--yes" @click="setMatchArticle()">Yes, it is</div>
+                <div v-if="storeMatchArticles()[0].data.hasOwnProperty('title')">
+                    <div class="parameters_button parameters_matchmaking--yes" @click="serveSetMatch()">Yes, it is</div>
                     <span class="divider-slash">/</span>
-                    <div class="parameters_button parameters_matchmaking--no" @click="unSetMatchArticle()">No, it's not</div>
+                    <div class="parameters_button parameters_matchmaking--no" @click="unServeSetMatch()">No, it's not</div>
+                </div>
+                <div v-else>
+                    <div class="parameters_button parameters_matchmaking--yes--inactive">Yes, it is</div>
+                    <span class="divider-slash">/</span>
+                    <div class="parameters_button parameters_matchmaking--no--inactive">No, it's not</div>
+                </div>
             </div>
         </div>
 
@@ -70,6 +88,9 @@
     export default {
         name: "parameters",
         computed: {
+            storeSourceArticle() {
+                return this.$store.state.articlesStore.sourceArticle
+            },
             scrollLock() {
                 return this.$store.state.articlesStore.scrollLock
             },
@@ -83,9 +104,18 @@
         data() {
             return {
                 showParameters: true,
+                isMatch: null
             }
         },
         methods: {
+            serveSetMatch() {
+                this.isMatch = true;
+                this.setMatchArticle();
+            },
+            unServeSetMatch() {
+                this.isMatch = false;
+                this.unSetMatchArticle();
+            },
             getMatchArticles() {
                 return this.$store.dispatch('articlesStore/get_match')
             },
@@ -238,6 +268,25 @@
         }
     }
 
+    .parameters_matchmaking--yes--inactive {
+        color: rgba(0, 0, 0, 0.2);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+        &:hover {
+            background-color: transparent;
+            cursor: default;
+        }
+    }
+
+    .parameters_matchmaking--no--inactive {
+        margin-left: 0;
+        color: rgba(0, 0, 0, 0.2);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+        &:hover {
+            background-color: transparent;
+            cursor: default;
+        }
+    }
+
     .parameters_form--submit--noparams {
         color: rgba(0, 0, 0, 0.2);
         border-bottom: 2px solid rgba(0, 0, 0, 0.2);
@@ -291,6 +340,33 @@
 
         color: rgba(0, 0, 0, 0.2);
         border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .popup-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .popup {
+        padding: $spacing;
+        font-size: 20px;
+        line-height: 26px;
+        top: 40%;
+        left: 25%;
+        width: 50%;
+        height: 20%;
+        border: 1px solid rgba(49, 49, 49, 1);
+        /*left: 1px;*/
+        /*top: 1px;*/
+        /*bottom: 1px;*/
+        /*right: 1px;*/
+        position: absolute;
+        margin: auto;
+        background-color: white;
     }
 
 </style>

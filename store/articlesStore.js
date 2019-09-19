@@ -94,7 +94,7 @@ const actions = {
 
 const mutations = {
     set_ConfirmMatch (state, data) {
-        alert("The articles " + state.sourceArticle.title.toUpperCase() + " and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are a good match.");
+        // alert("The articles " + state.sourceArticle.title.toUpperCase() + " and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are a good match.");
         state.matchArticles[state.matchArticleOnView].isMatch = true
     },
     set_sourceAr (state, data) {
@@ -111,7 +111,7 @@ const mutations = {
         state.matchArticles[2].data = data[2];
     },
     set_denyMatch (state, data) {
-        alert("The articles " + state.sourceArticle.title.toUpperCase() + "and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are not a good match.");
+        // alert("The articles " + state.sourceArticle.title.toUpperCase() + "and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are not a good match.");
         state.matchArticles[state.matchArticleOnView].isMatch = false
     },
     toggleThis(state, param) {

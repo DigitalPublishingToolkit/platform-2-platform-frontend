@@ -13,11 +13,11 @@
         <!--yesMatch : storeMatchArticles()[matchArticleOnView].isMatch-->
             <div class="article--data--placeholder">
                 <p>Title</p>
-                <svg class="console-carret" v-if="paramList.title" width="8" height="7" viewBox="0 -50 30 25">
+                <svg class="console-carret" v-bind:class="{active : showConsole.title}" v-if="paramList.title && (articleType === 'match')" @click="showConsole.title = !showConsole.title" width="8" height="7" viewBox="0 -50 30 25">
                     <path d="M29.941406 -52.500000C29.785156 -52.656250 29.589844 -52.753906 29.355469 -52.792969L0.644531 -52.792969C0.410156 -52.753906 0.214844 -52.656250 0.058594 -52.500000C-0.019531 -52.265625 0.000000 -52.050781 0.117188 -51.855469L14.472656 -27.890625C14.628906 -27.734375 14.804688 -27.636719 15.000000 -27.597656C15.234375 -27.636719 15.410156 -27.734375 15.527344 -27.890625L29.882812 -51.855469C30.000000 -52.089844 30.019531 -52.304688 29.941406 -52.500000ZM29.941406 -52.500000"></path>
                 </svg>
                 <div v-if="showConsole.title" class="console">
-
+                    This title overlaps [AMOUNT] with these words as closest match: [WORD 1], [WORD 2], [WORD 3]…
                 </div>
             </div>
             <div class="article--data--content article--data--content_title">
@@ -28,6 +28,12 @@
         <div class="article--data article--data_author" v-bind:class="{requireY : paramList.author}">
             <div class="article--data--placeholder">
                 <p>Author</p>
+                <svg class="console-carret" v-bind:class="{active : showConsole.author}" v-if="paramList.author && (articleType === 'match')" @click="showConsole.author = !showConsole.author" width="8" height="7" viewBox="0 -50 30 25">
+                    <path d="M29.941406 -52.500000C29.785156 -52.656250 29.589844 -52.753906 29.355469 -52.792969L0.644531 -52.792969C0.410156 -52.753906 0.214844 -52.656250 0.058594 -52.500000C-0.019531 -52.265625 0.000000 -52.050781 0.117188 -51.855469L14.472656 -27.890625C14.628906 -27.734375 14.804688 -27.636719 15.000000 -27.597656C15.234375 -27.636719 15.410156 -27.734375 15.527344 -27.890625L29.882812 -51.855469C30.000000 -52.089844 30.019531 -52.304688 29.941406 -52.500000ZM29.941406 -52.500000"></path>
+                </svg>
+                <div v-if="showConsole.author" class="console">
+                    The authors overlap by [AMOUNT] with this word as closest match: [WORD 1]
+                </div>
             </div>
             <div class="article--data--content article--data--content_author">
                 {{articleData.author}}
@@ -49,6 +55,12 @@
         <div class="article--data article--data_tags" v-bind:class="{requireY : paramList.tags}">
             <div class="article--data--placeholder">
                 <p>Tags</p>
+                <svg class="console-carret" v-bind:class="{active : showConsole.tags}" v-if="paramList.tags && (articleType === 'match')" @click="showConsole.tags = !showConsole.tags" width="8" height="7" viewBox="0 -50 30 25">
+                    <path d="M29.941406 -52.500000C29.785156 -52.656250 29.589844 -52.753906 29.355469 -52.792969L0.644531 -52.792969C0.410156 -52.753906 0.214844 -52.656250 0.058594 -52.500000C-0.019531 -52.265625 0.000000 -52.050781 0.117188 -51.855469L14.472656 -27.890625C14.628906 -27.734375 14.804688 -27.636719 15.000000 -27.597656C15.234375 -27.636719 15.410156 -27.734375 15.527344 -27.890625L29.882812 -51.855469C30.000000 -52.089844 30.019531 -52.304688 29.941406 -52.500000ZM29.941406 -52.500000"></path>
+                </svg>
+                <div v-if="showConsole.tags" class="console">
+                    This title overlaps [AMOUNT] with these words as closest match: [WORD 1], [WORD 2], [WORD 3]…
+                </div>
             </div>
             <div v-if="articleData.tags.length > 0" class="article--data--content article--data--content_tags">
                 <span class="article--data--content_tags_tag" v-for="tag in articleData.tags">{{tag}}</span>
@@ -73,6 +85,12 @@
         <div class="article--data article--data_body" v-bind:class="{requireY : paramList.body}">
             <div class="article--data--placeholder">
                 <p>Body</p>
+                <svg class="console-carret" v-bind:class="{active : showConsole.body}" v-if="paramList.body && (articleType === 'match')" @click="showConsole.body = !showConsole.body" width="8" height="7" viewBox="0 -50 30 25">
+                    <path d="M29.941406 -52.500000C29.785156 -52.656250 29.589844 -52.753906 29.355469 -52.792969L0.644531 -52.792969C0.410156 -52.753906 0.214844 -52.656250 0.058594 -52.500000C-0.019531 -52.265625 0.000000 -52.050781 0.117188 -51.855469L14.472656 -27.890625C14.628906 -27.734375 14.804688 -27.636719 15.000000 -27.597656C15.234375 -27.636719 15.410156 -27.734375 15.527344 -27.890625L29.882812 -51.855469C30.000000 -52.089844 30.019531 -52.304688 29.941406 -52.500000ZM29.941406 -52.500000"></path>
+                </svg>
+                <div v-if="showConsole.body" class="console">
+                    This title overlaps [AMOUNT] with these words as closest match: [WORD 1], [WORD 2], [WORD 3]…
+                </div>
             </div>
             <div v-if="articleType === 'source'" class="article--data--content article--data--content_body">
                 <p class="article--data--content_body_paragraph" v-for="item in sourceBodyTextArray()">
@@ -199,7 +217,7 @@
         margin-top: 33px;
         &--data {
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            transition: background-color 0.2s linear;
+            transition: background-color 0.2s, height 1s;
 
             &:hover {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -214,14 +232,24 @@
                 }
                 & svg {
                     display: inline-block;
-                    fill: $red;
+                    fill: rgba(255, 87, 67, 0.6);
                     margin-left: 1px;
-                    transform: rotate(-90deg);
+                    transform: rotate(0deg);
                     transition: transform 0.2s linear;
                     &:hover {
-                        margin-left: 3px;
+                        cursor: pointer;
+                        margin-left: 2px;
+                    }
+                    &.active {
+                        fill: rgba(255, 87, 67, 1);
                         transform: rotate(0deg);
                     }
+                }
+                & .console {
+                    margin-left: $spacing;
+                    margin-top: $spacing/2;
+                    margin-right: $spacing;
+                    color: rgba(0, 0, 0, 0.4);
                 }
             }
             &--content {
@@ -278,6 +306,9 @@
         background-color: rgba(255, 87, 67, 0.1);
         border-bottom: 1px solid rgba(255, 87, 67, 0.5);
         transition: background-color 0.2s linear;
+        &:hover {
+            border-bottom: 1px solid rgba(255, 87, 67, 1);
+        }
         & .article--data--content_tags_tag {
             background-color: rgba(255, 87, 67, 0.6);
         }
