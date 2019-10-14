@@ -50,7 +50,7 @@ const getters = {
 
 const actions = {
     async get_source ({ commit }) {
-        await axios.get('https://mhp.andrefincato.info/api/article/random').then((res) => {
+        await axios.get('https://mhp.andrefincato.info/api/articles/amateur-cities').then((res) => {
             commit('set_sourceAr', res.data)
         })
     },
@@ -98,7 +98,7 @@ const mutations = {
         state.matchArticles[state.matchArticleOnView].isMatch = true
     },
     set_sourceAr (state, data) {
-        state.sourceArticle = data
+        state.sourceArticle = data[50]
     },
     changeLockedScroll (state) {
         state.scrollLock = !state.scrollLock

@@ -1,6 +1,10 @@
 <template>
     <div class="main_articles">
-        <div id="left-column" class="main_articles_column main_articles_column--left" v-on:scroll="handleScroll">
+        <div id="left-column" class="main_articles_column main_articles_column--left" v-on:scroll="scrollBarNow">
+            <div class="article--scrollbar">
+                <div class="article--scrollbar_thumb"></div>
+            </div>
+
             <div class="article--placeholder">
                 <p>Source Article</p>
             </div>
@@ -45,6 +49,9 @@
                 checkedParameters: [],
             }
         },
+        mounted() {
+            this.setScrollBar();
+        },
         components: {
             articleComp,
             parameters
@@ -83,8 +90,22 @@
                             break;
                     }
                 }
+            },
+            setScrollBar: function() {
+                var contentHeight = document.getElementsByClassName("article")[0].clientHeight;
+                var viewportHeight = document.getElementById("left-column").clientHeight;
+
+                document.getElementsByClassName("article--scrollbar_thumb")[0].style.height = viewportHeight * (viewportHeight / contentHeight) + "px";
+            },
+            scrollBarNow: function() {
+                var contentHeight = document.getElementsByClassName("article")[0].clientHeight;
+                var viewportHeight = document.getElementById("left-column").clientHeight;
+
+                var contentScroll = document.getElementById("left-column").scrollTop;
+
+                document.getElementsByClassName("article--scrollbar_thumb")[0].style.top = Math.ceil(contentScroll * (viewportHeight / contentHeight)) + "px";
             }
-        },
+        }
     }
 </script>
 
@@ -146,6 +167,7 @@
     .article--placeholder {
         font-size: $font-size-s;
         color: rgba(0, 0, 0, 0.6);
+        margin: 0 $spacing/3;
         padding: $spacing/2;
         position: fixed;
         width: 50%;
@@ -227,5 +249,25 @@
         margin: auto;
         text-align: center;
         color: rgba(0,0,0,0.2);
+    }
+
+    .article--scrollbar{
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        right: 50vw;
+        z-index: 99;
+
+        &_thumb {
+            background-color: black;
+            position: absolute;
+            width: 100%;
+            right: 0;
+            &:hover {
+                width: 6px;
+                cursor: pointer;
+            }
+        }
     }
 </style>

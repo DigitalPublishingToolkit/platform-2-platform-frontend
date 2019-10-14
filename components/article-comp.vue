@@ -5,7 +5,7 @@
                 <p>Publisher</p>
             </div>
             <div class="article--data--content article--data--content_publisher">
-                {{articleData.publisher}} <a class="linkToOrigin" v-bind:href="articleData.url" target="_blank">go to article ↗</a>
+                {{articleData.publisher}}, <a class="linkToOrigin" v-bind:href="articleData.url" target="_blank">see article on website ↗</a>
             </div>
         </div>
 
@@ -82,6 +82,18 @@
             </div>
         </div>
 
+        <div class="article--data article--data_images">
+            <div class="article--data--placeholder">
+                <p>Images</p>
+            </div>
+            <div v-if="articleData.images.length > 0" class="article--data--content article--data--content_images">
+                <img class="article--data--content_images_image" v-for="image in articleData.images" :src="'https://mhp.andrefincato.info/' + image">
+            </div>
+            <div v-else class="article--data--content article--data--content_none">
+                Not found…
+            </div>
+        </div>
+
         <div class="article--data article--data_body" v-bind:class="{requireY : paramList.body}">
             <div class="article--data--placeholder">
                 <p>Body</p>
@@ -142,17 +154,14 @@
             },
         },
         mounted() {
-            console.log(this.$refs.titleEle.clientHeight);
-            this.adjustH({key: 'title', amount: this.$refs.titleEle.clientHeight + 1});
+            // console.log(this.$refs.titleEle.clientHeight);
+            // this.adjustH({key: 'title', amount: this.$refs.titleEle.clientHeight + 1});
         },
         methods: {
             checkIfMatch() {
                 if(isNaN(matchArticleOnView)) {
                     return false
                 }
-                // if(storeMatchArticles()[matchArticleOnView].isMatch) {
-                //
-                // }
             },
             storeMatchArticles() {
                 return this.$store.state.articlesStore.matchArticles
@@ -204,7 +213,6 @@
 
                 return day + " " + months[monthNum] + " " + year;
             }
-
         }
     }
 </script>
@@ -226,6 +234,7 @@
             &--placeholder {
                 font-size: $font-size-s;
                 color: rgba(0, 0, 0, 0.4);
+                margin: 0 $spacing/3;
                 padding: $spacing/2;
                 & p {
                     display: inline-block;
@@ -256,6 +265,7 @@
                 font-size: $font-size;
                 color: rgba(0, 0, 0, 1);
                 margin: $spacing/2 $spacing*1.5 $spacing*1.5 $spacing*1.5;
+                padding: 0 $spacing/3;
 
                 & .linkToOrigin {
                     /*display: inline-block;*/
@@ -290,6 +300,11 @@
                 }
                 &_abstract {
                     line-height: 1.4em;
+                }
+                &_images {
+                    &_image {
+                        height: $spacing * 6;
+                    }
                 }
                 &_body {
                     & p {
