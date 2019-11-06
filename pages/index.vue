@@ -11,13 +11,13 @@
             <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source"></articleComp>
         </div>
         <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="handleScroll" v-bind:class="{noArticle : (storeMatchArticles().length === 0)}">
-            <div v-if="'title' in storeMatchArticles()[0].data" class="article--placeholder match-tabs">
+            <div v-if="storeMatchArticles().length" class="article--placeholder match-tabs">
                 <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index)}" v-bind:data="index" @click="updateView(index)">
                     <p>Matched Article {{index + 1}}</p>
                 </div>
             </div>
-            <articleComp v-if="'title' in storeMatchArticles()[0].data" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" :isMatch="match.isMatch" class="article--match article--match--1" v-bind:class="{active : match.onView}"></articleComp>
-            <div class="noArticle_placeholder" v-if="!('title' in storeMatchArticles()[0].data)">No matched articles…</div>
+            <articleComp v-if="storeMatchArticles().length" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" :isMatch="match.isMatch" class="article--match article--match--1" v-bind:class="{active : match.onView}"></articleComp>
+            <div class="noArticle_placeholder" v-if="!storeMatchArticles().length">No matched articles…</div>
         </div>
     </div>
 </template>
@@ -179,8 +179,9 @@
             align-content: stretch;
             align-items: stretch;
             padding: 0;
+            margin: 0;
             & .tab {
-                padding: $spacing/2;
+                padding: $spacing/2 ($spacing/2 + 6);
                 flex-grow: 1;
                 background-color: $charcoal;
                 color: $white;
@@ -260,7 +261,7 @@
         z-index: 99;
 
         &_thumb {
-            background-color: black;
+            background-color: $charcoal;
             position: absolute;
             width: 100%;
             right: 0;

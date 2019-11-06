@@ -4,28 +4,14 @@ const state = () => ({
     scrollLock: true,
     sourceArticle: {},
     matchArticleOnView: '',
-    matchArticles: [
-        {
-            onView: true,
-            isMatch: '',
-            data: {}
-        },
-        {
-            onView: false,
-            isMatch: '',
-            data: {}
-        },
-        {
-            onView: false,
-            isMatch: '',
-            data: {}
-        }
-    ],
+    matchArticles: [],
+    matchPool: [],
+    preMatchedArticles: [],
     listPar: {
-        title: false,
-        author: false,
-        tags: false,
-        body: false
+        title: true,
+        author: true,
+        tags: true,
+        body: true
     }
 })
 
@@ -50,7 +36,8 @@ const getters = {
 
 const actions = {
     async get_source ({ commit }) {
-        await axios.get('https://mhp.andrefincato.info/api/articles/amateur-cities').then((res) => {
+        await axios.get('https://mhp.andrefincato.info/api/article/random').then((res) => {
+            // console.log(res.data);
             commit('set_sourceAr', res.data)
         })
     },
@@ -98,7 +85,10 @@ const mutations = {
         state.matchArticles[state.matchArticleOnView].isMatch = true
     },
     set_sourceAr (state, data) {
-        state.sourceArticle = data[50]
+        state.sourceArticle = data;
+        if(data.matches.length > 0) {
+            state.preMatchedArticles = data.matches;
+        }
     },
     changeLockedScroll (state) {
         state.scrollLock = !state.scrollLock
@@ -106,13 +96,39 @@ const mutations = {
     set_matchAr (state, data) {
         // console.log(data)
         state.matchArticleOnView = 0;
-        state.matchArticles[0].data = data[0];
-        state.matchArticles[1].data = data[1];
-        state.matchArticles[2].data = data[2];
+
+        data.forEach(function(elem, i){
+            if(i < 3) {
+                let obj;
+                if(i === 0) {
+                    obj = {
+                        onView : true,
+                        isMatch : '',
+                        data : data[i]
+                    };
+                } else {
+                    obj = {
+                        onView : false,
+                        isMatch : '',
+                        data : data[i]
+                    };
+                }
+                state.matchArticles.push(obj);
+            } else {
+                state.matchPool.push(data);
+            }
+        });
+        // state.matchArticles[0].data = data[0];
+        // state.matchArticles[1].data = data[1];
+        // state.matchArticles[2].data = data[2];
     },
     set_denyMatch (state, data) {
         // alert("The articles " + state.sourceArticle.title.toUpperCase() + "and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are not a good match.");
-        state.matchArticles[state.matchArticleOnView].isMatch = false
+        state.matchArticles[state.matchArticleOnView].isMatch = false;
+        state.matchArticles.splice(state.matchArticleOnView, 1);
+        // if(state.matchArticles[0].isMatch === false && state.matchArticles[1].isMatch === false && state.matchArticles[2].isMatch === false) {
+        //     console.log("NEW MATCHES NEEDED!");
+        // }
     },
     toggleThis(state, param) {
         state.listPar[param] = !state.listPar[param]

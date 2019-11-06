@@ -5,7 +5,7 @@
                 <p>Publisher</p>
             </div>
             <div class="article--data--content article--data--content_publisher">
-                {{articleData.publisher}}, <a class="linkToOrigin" v-bind:href="articleData.url" target="_blank">see article on website ↗</a>
+                {{articleData.publisher}}, {{getMonthFromString(articleData.mod)}}, <a class="linkToOrigin" v-bind:href="articleData.url" target="_blank">see article on website ↗</a>
             </div>
         </div>
 
@@ -40,18 +40,6 @@
             </div>
         </div>
 
-        <div class="article--data article--data_timestamp">
-            <div class="article--data--placeholder">
-                <p>Date</p>
-            </div>
-            <div v-if="articleData.mod.split('').length > 0" class="article--data--content article--data--content_timestamp">
-                {{getMonthFromString(articleData.mod)}}
-            </div>
-            <div v-else class="article--data--content article--data--content_none">
-                Not found…
-            </div>
-        </div>
-
         <div class="article--data article--data_tags" v-bind:class="{requireY : paramList.tags}">
             <div class="article--data--placeholder">
                 <p>Tags</p>
@@ -82,18 +70,6 @@
             </div>
         </div>
 
-        <div class="article--data article--data_images">
-            <div class="article--data--placeholder">
-                <p>Images</p>
-            </div>
-            <div v-if="articleData.images.length > 0" class="article--data--content article--data--content_images">
-                <img class="article--data--content_images_image" v-for="image in articleData.images" :src="'https://mhp.andrefincato.info/' + image">
-            </div>
-            <div v-else class="article--data--content article--data--content_none">
-                Not found…
-            </div>
-        </div>
-
         <div class="article--data article--data_body" v-bind:class="{requireY : paramList.body}">
             <div class="article--data--placeholder">
                 <p>Body</p>
@@ -113,6 +89,26 @@
                 <p class="article--data--content_body_paragraph" v-for="item in getRightMatchArticle(articleInd)">
                     {{item}}
                 </p>
+            </div>
+        </div>
+
+        <div v-if="articleType === 'source'">
+            <div v-if="articleData.links.length > 0" class="article--data article--data_references">
+                <div class="article--data--placeholder">
+                    <p>References</p>
+                </div>
+                <ul class="article--data--content article--data--content_references">
+                    <li class="article--data--content_references_reference" v-for="reference in articleData.links"><a :href="reference">{{reference.split("://")[1]}}</a></li>
+                </ul>
+            </div>
+
+            <div v-if="articleData.images.length > 0" class="article--data article--data_images">
+                <div class="article--data--placeholder">
+                    <p>Images</p>
+                </div>
+                <div class="article--data--content article--data--content_images">
+                    <img @click="showImageFullscreen($event)" class="article--data--content_images_image" v-for="image in articleData.images" :src="'https://mhp.andrefincato.info/' + image">
+                </div>
             </div>
         </div>
     </div>
@@ -212,6 +208,15 @@
                 };
 
                 return day + " " + months[monthNum] + " " + year;
+            },
+            showImageFullscreen: function(event){
+                const modal = document.getElementById("modal");
+                const modalGroup = document.getElementsByClassName("modal--group")[0];
+                let img = event.target.cloneNode(true);
+                img.classList.add("fullscreen")
+                modal.classList.add("show");
+                modal.classList.remove("hide");
+                modalGroup.append(img);
             }
         }
     }
@@ -301,9 +306,23 @@
                 &_abstract {
                     line-height: 1.4em;
                 }
+                &_references {
+                    list-style: none;
+                    padding: 0;
+                    & a {
+                        color: $charcoal;
+                        text-decoration-line: none;
+                        &:hover {
+                            color: $black;
+                        }
+                    }
+                }
                 &_images {
                     &_image {
                         height: $spacing * 6;
+                        &:hover {
+                            cursor: pointer;
+                        }
                     }
                 }
                 &_body {

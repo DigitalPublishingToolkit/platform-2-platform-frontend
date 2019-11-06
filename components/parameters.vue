@@ -3,13 +3,13 @@
         <div class="popup-wrapper" v-if="isMatch === true" @click="isMatch = null">
             <div class="popup">
                 Thank you. <br><br>
-                <strong>{{storeSourceArticle.title}}</strong> and <strong>{{storeMatchArticles()[matchArticleOnView].data.title}}</strong> are saved as a match.
+                <strong>{{storeSourceArticle.title}}</strong> and <strong>{{storeMatchArticles()[matchArticleOnView].title}}</strong> are saved as a match.
             </div>
         </div>
         <div class="popup-wrapper" v-if="isMatch === false" @click="isMatch = null">
             <div class="popup">
                 Thank you. <br><br>
-                <strong>{{storeSourceArticle.title}}</strong> and <strong>{{storeMatchArticles()[matchArticleOnView].data.title}}</strong> are saved as not a match.
+                <strong>{{storeSourceArticle.title}}</strong> and <strong>{{storeMatchArticles()[matchArticleOnView].title}}</strong> are saved as not a match.
             </div>
         </div>
         <div class="parameters_column parameters_column--left">
@@ -40,9 +40,9 @@
             </div>
             <div class="parameters_column--field field-getmatch">
                 <p class="placeholder">Get new matches</p>
-                <div v-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (!storeMatchArticles()[0].data.hasOwnProperty('title'))" class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get Matches</div>
-                <div v-else-if="!storeMatchArticles()[0].data.hasOwnProperty('title')" class="parameters_button parameters_form--submit--noparams">Get Matches</div>
-                <div v-else-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (storeMatchArticles()[0].data.hasOwnProperty('title'))" class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get new pool ↺</div>
+                <div v-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (!storeMatchArticles().length)" class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get Matches</div>
+                <div v-else-if="!storeMatchArticles()[0].hasOwnProperty('title')" class="parameters_button parameters_form--submit--noparams">Get Matches</div>
+                <div v-else-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (storeMatchArticles().length)" class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get new pool ↺</div>
                 <div v-else class="parameters_button parameters_form--submit--noparams">Get new pool ↺</div>
             </div>
         </div>
@@ -52,7 +52,7 @@
             <div class="parameters_column--field field-score">
                 <p class="placeholder">Score rating</p>
                 <div class="score_rating">
-                    <span v-if="Number.isInteger(matchArticleOnView)">{{Number.parseFloat(storeMatchArticles()[matchArticleOnView].data.score*100).toFixed(2)}}%</span>
+                    <span v-if="Number.isInteger(matchArticleOnView)">{{Number.parseFloat(storeMatchArticles()[matchArticleOnView].data.score * 100).toFixed(2)}}%</span>
                     <span class="score_rating--noarticle" v-else>-.--</span>
                 </div>
             </div>
@@ -66,7 +66,7 @@
             <div class="parameters_column--field field-matchmaking">
                 <p class="placeholder">Match or no match</p>
 <!--                    !storeMatchArticles()[matchArticleOnView].isMatch-->
-                <div v-if="storeMatchArticles()[0].data.hasOwnProperty('title')">
+                <div v-if="storeMatchArticles().length">
                     <div class="parameters_button parameters_matchmaking--yes" @click="serveSetMatch()">Yes, it is</div>
                     <span class="divider-slash">/</span>
                     <div class="parameters_button parameters_matchmaking--no" @click="unServeSetMatch()">No, it's not</div>
@@ -152,7 +152,7 @@
         left: 0;
         background-color: $white;
         border-top: 1px solid $charcoal;
-        z-index: 999;
+        z-index: 998;
 
         & .parameters_column {
             width: 50%;
