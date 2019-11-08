@@ -1,8 +1,8 @@
 <template>
     <div class="main_articles">
-        <div id="left-column" class="main_articles_column main_articles_column--left" v-on:scroll="scrollBarNow">
-            <div class="article--scrollbar">
-                <div class="article--scrollbar_thumb"></div>
+        <div id="left-column" class="main_articles_column main_articles_column--left" v-on:scroll="scrollBarNow(); handleScroll($event);">
+            <div class="articles_column--left--scrollbar article--scrollbar">
+                <div class="article--scrollbar_thumb articles_column--left--scrollbar_thumb"></div>
             </div>
 
             <div class="article--placeholder">
@@ -10,20 +10,38 @@
             </div>
             <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source"></articleComp>
         </div>
-        <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="handleScroll" v-bind:class="{noArticle : (storeMatchArticles().length === 0)}">
+        <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="scrollBarNow(); handleScroll($event);" v-bind:class="{noArticle : (storeMatchArticles().length === 0)}">
+            <div class="articles_column--right--scrollbar article--scrollbar">
+                <div class="article--scrollbar_thumb articles_column--right--scrollbar_thumb"></div>
+            </div>
+
             <div v-if="storeMatchArticles().length" class="article--placeholder match-tabs">
                 <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index)}" v-bind:data="index" @click="updateView(index)">
                     <p>Matched Article {{index + 1}}</p>
                 </div>
             </div>
             <articleComp v-if="storeMatchArticles().length" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" :isMatch="match.isMatch" class="article--match article--match--1" v-bind:class="{active : match.onView}"></articleComp>
-            <div class="noArticle_placeholder" v-if="!storeMatchArticles().length">No matched articles…</div>
+
+            <div v-if="storePreMatchedArticles().length" class="article--placeholder match-tabs">
+                <div v-for="(match, index) in storePreMatchedArticles()" class="tab" v-bind:data="index" @click="updateView(index)">
+                    <p>Matched Article {{index + 1}}</p>
+                </div>
+            </div>
+
+            <div class="noArticle_placeholder" v-if="!storeMatchArticles().length && !loadMatch()">Select criteria and get articles…</div>
+            <div class="loading_placeholder" v-if="loadMatch()">
+                <div class="loadingContainer">
+                    <div class="loader box-rotation"></div>
+                </div>
+                <p>Criteria send, retrieving matches from server…</p>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-    import { mapMutations } from 'vuex'
+    import {mapMutations} from 'vuex'
+    import {mapGetters} from 'vuex'
     import articleComp from "~/components/article-comp"
     import parameters from "~/components/parameters"
 
@@ -46,66 +64,157 @@
         },
         data() {
             return {
-                checkedParameters: [],
+                checkedParameters: []
             }
         },
         mounted() {
-            this.setScrollBar();
+            this.setScrollBarSource();
         },
         components: {
             articleComp,
             parameters
         },
-        // mounted() {
-        //     this.$nextTick(() => {
-        //         return this.$store.dispatch('articlesStore/get_source')
-        //     })
-        // },
         methods: {
+            ...mapGetters({
+                sourceBodyTextArray: 'articlesStore/sourceBodyAsArray',
+                vocabulary: 'articlesStore/vocabulary'
+            }),
             ...mapMutations({
                 updateView: 'articlesStore/setOnview',
                 lockedScroll: 'articlesStore/changeLockedScroll'
             }),
-            // updateViewDeep(n) {
+            // removePreviousSpans() {
+            //     var sourceArticle = document.querySelector(".article.article--source");
+            //     var sourceArticleBody = sourceArticle.querySelector(".article--data--content.article--data--content_body");
+            //     var allSourceSpans = sourceArticleBody.querySelectorAll("span");
             //
+            //     allSourceSpans.forEach(function(elem, index){
+            //         elem.classList.remove("highlight");
+            //     });
             // },
-            // updateViewArticle() {
-            //     // const targetId = event.currentTarget.data
-            //     return this.$store.dispatch('articlesStore/updateViewArticle')
-            // },
+            loadMatch() {
+                return this.$store.state.articlesStore.loadingMatches
+            },
             getMatchArticles() {
                 return this.$store.dispatch('articlesStore/get_match')
             },
             storeMatchArticles() {
                 return this.$store.state.articlesStore.matchArticles
             },
+            storePreMatchedArticles() {
+                return this.$store.state.articlesStore.preMatchedArticles
+            },
             handleScroll: function(e) {
                 if(this.scrollLock) {
                     switch(e.currentTarget.classList[1]) {
                         case("main_articles_column--left"):
                             document.getElementById("right-column").scrollTop = e.target.scrollTop;
+                            this.scrollBarNow(e.currentTarget.classList[1]);
+                            this.scrollBarNow("main_articles_column--right");
+
                             break;
                         case("main_articles_column--right"):
                             document.getElementById("left-column").scrollTop = e.target.scrollTop;
+                            this.scrollBarNow(e.currentTarget.classList[1]);
+                            this.scrollBarNow("main_articles_column--left");
+
                             break;
                     }
+                } else {
+                    this.scrollBarNow(e.currentTarget.classList[1]);
                 }
             },
-            setScrollBar: function() {
-                var contentHeight = document.getElementsByClassName("article")[0].clientHeight;
+            setScrollBarSource: function() {
+                var contentHeight = document.getElementsByClassName("article article--source")[0].clientHeight;
                 var viewportHeight = document.getElementById("left-column").clientHeight;
-
-                document.getElementsByClassName("article--scrollbar_thumb")[0].style.height = viewportHeight * (viewportHeight / contentHeight) + "px";
+                document.getElementsByClassName("articles_column--left--scrollbar_thumb")[0].style.height = viewportHeight * (viewportHeight / contentHeight) + "px";
             },
-            scrollBarNow: function() {
-                var contentHeight = document.getElementsByClassName("article")[0].clientHeight;
-                var viewportHeight = document.getElementById("left-column").clientHeight;
+            scrollBarNow: function(scrollTargetClass) {
+                var contentHeight;
+                var viewportHeight;
+                var contentScroll;
 
-                var contentScroll = document.getElementById("left-column").scrollTop;
+                switch(scrollTargetClass) {
+                    case("main_articles_column--left"):
+                        contentHeight = document.getElementsByClassName("article article--source")[0].clientHeight;
+                        // console.log(contentHeight);
+                        viewportHeight = document.getElementById("left-column").clientHeight;
+                        contentScroll = document.getElementById("left-column").scrollTop;
+                        document.getElementsByClassName("articles_column--left--scrollbar_thumb")[0].style.top = Math.ceil(contentScroll * (viewportHeight / contentHeight)) + "px";
 
-                document.getElementsByClassName("article--scrollbar_thumb")[0].style.top = Math.ceil(contentScroll * (viewportHeight / contentHeight)) + "px";
+                        break;
+                    case("main_articles_column--right"):
+                        if(this.storeMatchArticles().length > 0) {
+                            contentHeight = document.getElementsByClassName("article active")[0].clientHeight;
+                            // console.log(contentHeight);
+                            viewportHeight = document.getElementById("right-column").clientHeight;
+                            contentScroll = document.getElementById("right-column").scrollTop;
+                            document.getElementsByClassName("articles_column--right--scrollbar_thumb")[0].style.top = Math.ceil(contentScroll * (viewportHeight / contentHeight)) + "px";
+                        }
+                        break;
+                }
+
             }
-        }
+        },
+        updated: function() {
+            this.$nextTick(function () {
+
+                if(this.storeMatchArticles().length > 0) {
+                    var contentHeight = document.getElementsByClassName("article active")[0].clientHeight;
+                    var viewportHeight = document.getElementById("right-column").clientHeight;
+                    // console.log(contentHeight, viewportHeight);
+                    document.getElementsByClassName("articles_column--right--scrollbar_thumb")[0].style.height = viewportHeight * (viewportHeight / contentHeight) + "px";
+
+
+                    // find vocabulary
+                    // var findPlainTextExceptInLinks = function(element, substring, callback) {
+                    //     for (var childi= element.childNodes.length; childi-->0;) {
+                    //         var child= element.childNodes[childi];
+                    //         if (child.nodeType===1) {
+                    //             if (child.tagName.toLowerCase()!=='a')
+                    //                 findPlainTextExceptInLinks(child, substring, callback);
+                    //         } else if (child.nodeType===3) {
+                    //             var index= child.data.length;
+                    //             while (true) {
+                    //                 index= child.data.lastIndexOf(substring, index);
+                    //                 if (index===-1)
+                    //                     break;
+                    //                 callback.call(window, child, index)
+                    //             }
+                    //         }
+                    //     }
+                    // };
+                    //
+                    // for(var i = 0; i < this.vocabulary().length; i++) {
+                    //     var substring = this.vocabulary()[i];
+                    //
+                    //     var sourceArticle = document.querySelector(".article.article--source");
+                    //     var sourceArticleBody = sourceArticle.querySelector(".article--data--content.article--data--content_body");
+                    //
+                    //     findPlainTextExceptInLinks(sourceArticleBody, substring, function(node, index) {
+                    //         node.splitText(index + substring.length);
+                    //         var spanHighlight = document.createElement('span');
+                    //         spanHighlight.classList.add('highlight');
+                    //         spanHighlight.appendChild(node.splitText(index));
+                    //         node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                    //         // console.log(index);
+                    //     });
+                    //
+                    //     var activeMatchArticle = document.querySelector(".article.active");
+                    //     var activeMatchArticleBody = activeMatchArticle.querySelector(".article--data--content.article--data--content_body");
+                    //
+                    //     findPlainTextExceptInLinks(activeMatchArticleBody, substring, function(node, index) {
+                    //         node.splitText(index + substring.length);
+                    //         var spanHighlight = document.createElement('span');
+                    //         spanHighlight.classList.add('highlight');
+                    //         spanHighlight.appendChild(node.splitText(index));
+                    //         node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                    //         // console.log(index);
+                    //     });
+                    // }
+                }
+            });
+        },
     }
 </script>
 
@@ -252,23 +361,108 @@
         color: rgba(0,0,0,0.2);
     }
 
+    .articles_column--left--scrollbar {
+        right: 50vw;
+        & .article--scrollbar_thumb {
+            right: 0;
+        }
+    }
+
+    .articles_column--right--scrollbar {
+        left: 50.05vw;
+        & .article--scrollbar_thumb {
+            left: 0;
+        }
+    }
+
     .article--scrollbar{
         position: fixed;
         top: 0;
         bottom: 0;
         width: 3px;
-        right: 50vw;
         z-index: 99;
 
         &_thumb {
             background-color: $charcoal;
             position: absolute;
             width: 100%;
-            right: 0;
             &:hover {
                 width: 6px;
                 cursor: pointer;
             }
         }
     }
+
+    .loading_placeholder {
+        position: absolute;
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+
+        & .loadingContainer {
+            width: 100%;
+            display: block;
+            clear: both;
+            text-align: center;
+        }
+        & p {
+            font-size: $font-size-s;
+            display: block;
+            width: 100%;
+            top: 10%;
+            text-align: center;
+            position: absolute;
+            opacity: 0.5;
+        }
+    }
+
+    .loader,.loader:before,.loader:after{
+        box-sizing: border-box;
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    @keyframes rect-rotate {
+        0% {
+            transform: rotate(0);
+        }
+        50%, 100% {
+            transform: rotate(180deg);
+        }
+    }
+
+    @keyframes fill-rect {
+        0%, 50% {
+            height: 0px;
+        }
+        100% {
+
+            height: inherit;
+        }
+    }
+
+    .loader.box-rotation {
+        transform-origin: center center;
+        color: $charcoal;
+        width: $spacing*4;
+        height: $spacing*4;
+        position: relative;
+        border: 1px solid;
+        display: block;
+        animation: rect-rotate 2s linear infinite;
+        margin: auto;
+    }
+
+    .loader.box-rotation::after {
+        content: "";
+        height: 0px;
+        width: 100%;
+        height:100%;
+        display: block;
+        background: $charcoal;
+        opacity: 1;
+        animation: fill-rect 2s linear infinite;
+    }
+
 </style>

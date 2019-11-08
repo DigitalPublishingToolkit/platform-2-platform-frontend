@@ -16,3 +16,10 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+.highlight {
+  color: $charcoal;
+  border-radius: 2px;
+  font-family: $font-stack-sans;
+  opacity: 0.8;
+}

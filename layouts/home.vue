@@ -1,7 +1,7 @@
 <template>
     <div class="main">
         <div id="modal" class="hide">
-            <div class="modal--group">
+            <div class="modal--group" @click="closeModal()">
                 <div class="modal--group_remove" @click="closeModal()">[close]</div>
             </div>
         </div>

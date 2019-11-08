@@ -37,31 +37,60 @@
                         <input type="checkbox" id="body" value="body" :checked="paramList.body" @click="toggle('body')">
                     </div>
                 </form>
-            </div>
-            <div class="parameters_column--field field-getmatch">
-                <p class="placeholder">Get new matches</p>
-                <div v-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (!storeMatchArticles().length)" class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get Matches</div>
-                <div v-else-if="!storeMatchArticles()[0].hasOwnProperty('title')" class="parameters_button parameters_form--submit--noparams">Get Matches</div>
+                <div v-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (!storeMatchArticles().length)" class="parameters_button parameters_form--submit" @click="getMatchArticles(); loadingMatches(); matchesLoadedTimeOut();">Get Matches</div>
+                <div v-else-if="!storeMatchArticles().length" class="parameters_button parameters_form--submit--noparams">Get Matches</div>
                 <div v-else-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (storeMatchArticles().length)" class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get new pool ↺</div>
                 <div v-else class="parameters_button parameters_form--submit--noparams">Get new pool ↺</div>
             </div>
+<!--            <div class="parameters_column&#45;&#45;field field-getmatch">-->
+<!--                <p class="placeholder">Get new matches</p>-->
+<!--                -->
+<!--            </div>-->
         </div>
 
         <!-- RIGHT COLUMN -->
         <div class="parameters_column parameters_column--right">
             <div class="parameters_column--field field-score">
-                <p class="placeholder">Score rating</p>
+                <p class="placeholder">Algorithm match score</p>
                 <div class="score_rating">
                     <span v-if="Number.isInteger(matchArticleOnView)">{{Number.parseFloat(storeMatchArticles()[matchArticleOnView].data.score * 100).toFixed(2)}}%</span>
                     <span class="score_rating--noarticle" v-else>-.--</span>
                 </div>
             </div>
 
-            <div class="parameters_column--field field-scrollsync">
-                <p class="placeholder">Synced scrolling</p>
-                <div class="parameters_button active" v-if="scrollLock" @click="lockedScroll">Toggle sync off</div>
-                <div class="parameters_button inactive" v-else @click="lockedScroll">Toggle sync on</div>
+            <div class="parameters_column--field field-user-score">
+                <p class="placeholder">Your rating</p>
+                <form>
+<!--                    <label for="slider">{{value}}</label>-->
+<!--                    <input id="slider" type="range" min="1" max="10" value="5" v-model="value">-->
+                    <label>1</label>
+                    <input type="radio" value="1" name="user-rating">
+                    <label>2</label>
+                    <input type="radio" value="2" name="user-rating">
+                    <label>3</label>
+                    <input type="radio" value="3" name="user-rating">
+                    <label>4</label>
+                    <input type="radio" value="4" name="user-rating">
+                    <label>5</label>
+                    <input type="radio" value="5" name="user-rating">
+                    <label>6</label>
+                    <input type="radio" value="6" name="user-rating">
+                    <label>7</label>
+                    <input type="radio" value="7" name="user-rating">
+                    <label>8</label>
+                    <input type="radio" value="8" name="user-rating">
+                    <label>9</label>
+                    <input type="radio" value="9" name="user-rating">
+                    <label>10</label>
+                    <input type="radio" value="10" name="user-rating">
+                </form>
             </div>
+
+<!--            <div class="parameters_column&#45;&#45;field field-scrollsync">-->
+<!--                <p class="placeholder">Synced scrolling</p>-->
+<!--                <div class="parameters_button active" v-if="scrollLock" @click="lockedScroll">Toggle sync off</div>-->
+<!--                <div class="parameters_button inactive" v-else @click="lockedScroll">Toggle sync on</div>-->
+<!--            </div>-->
 
             <div class="parameters_column--field field-matchmaking">
                 <p class="placeholder">Match or no match</p>
@@ -104,7 +133,8 @@
         data() {
             return {
                 showParameters: true,
-                isMatch: null
+                isMatch: null,
+                value: 5,
             }
         },
         methods: {
@@ -117,21 +147,28 @@
                 this.unSetMatchArticle();
             },
             getMatchArticles() {
-                return this.$store.dispatch('articlesStore/get_match')
+                // this.loadingMatches();
+                // document.getElementsByClassName("noArticle_placeholder")[0].innerHTML = "LOADING!";
+                return this.$store.dispatch('articlesStore/get_match');
             },
             storeMatchArticles() {
-                return this.$store.state.articlesStore.matchArticles
+                return this.$store.state.articlesStore.matchArticles;
             },
             setMatchArticle() {
-                return this.$store.dispatch('articlesStore/confirm_match')
+                return this.$store.dispatch('articlesStore/confirm_match');
             },
             unSetMatchArticle() {
-                return this.$store.dispatch('articlesStore/deny_match')
+                return this.$store.dispatch('articlesStore/deny_match');
             },
             ...mapMutations({
                 toggle: 'articlesStore/toggleThis',
-                lockedScroll: 'articlesStore/changeLockedScroll'
-            })
+                lockedScroll: 'articlesStore/changeLockedScroll',
+                loadingMatches: 'articlesStore/set_loadMatch',
+                matchesLoaded: 'articlesStore/unSet_loadMatch'
+            }),
+            matchesLoadedTimeOut(){
+                setTimeout(this.matchesLoaded, 10000);
+            }
         },
     }
 </script>
@@ -158,20 +195,17 @@
             width: 50%;
             display: flex;
             align-items: stretch;
-            background-color: rgba(0, 0, 0, 0.05);
+            /*background-color: rgba(0, 0, 0, 0.05);*/
 
             &--left {
                 box-sizing: content-box;
-                border-right: 1px solid rgba(0, 0, 0, 0.1);
+                border-right: 1px solid rgba(0, 0, 0, 1);
                 float: left;
 
                 & .parameters_column--field {
                     &.field-checkboxes {
-                        flex-grow: 2;
-                        border-right: 1px solid rgba(0, 0, 0, 0.1);
-                    }
-                    &.field-getmatch {
-                        flex-grow: 1;
+                        /*flex-grow: 2;*/
+                        /*border-right: 1px solid rgba(0, 0, 0, 0.1);*/
                     }
                 }
             }
@@ -189,7 +223,7 @@
                     }
 
                     & .score_rating {
-                        font-weight: 300;
+                        /*font-weight: 300;*/
 
                         & span {
                             font-size: $font-size-l;
@@ -211,9 +245,10 @@
         }
         &_form {
             display: inline-block;
+            float: left;
             padding: 0 0 $spacing $spacing*1.5;
             &--option {
-                font-weight: 300;
+                /*font-weight: 300;*/
                 float: left;
                 display: inline-block;
                 color: $black;
@@ -248,7 +283,7 @@
         font-family: $font-stack-sans;
         font-size: 20px;
         line-height: 46px;
-        font-weight: 300;
+        /*font-weight: 300;*/
         background-color: transparent;
         outline: none;
         border-top: none;

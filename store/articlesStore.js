@@ -12,7 +12,8 @@ const state = () => ({
         author: true,
         tags: true,
         body: true
-    }
+    },
+    loadingMatches: false
 })
 
 const getters = {
@@ -29,8 +30,11 @@ const getters = {
     matchBodyAsArray_3: (state) => {
         return state.matchArticles[2].data.body.split('\n')
     },
-    parametersList (state) {
+    parametersList: (state) => {
         return state.list
+    },
+    vocabulary: (state) => {
+        return state.matchArticles[state.matchArticleOnView].data.vocabulary
     }
 }
 
@@ -52,8 +56,8 @@ const actions = {
                 tags: state.listPar.tags,
                 body: state.listPar.body
             }
-    }).then((res) => {
-        // console.log(res);
+        }).then((res) => {
+            // console.log(res);
             commit('set_matchAr', res.data)
         })
     },
@@ -71,7 +75,8 @@ const actions = {
         })
     },
     deny_match({ commit, state }) {
-        commit('set_denyMatch')
+        commit('set_denyMatch');
+        commit('setOnview', state.matchArticleOnView);
     }
     // updateViewArticle({ commit }, n) {
     //     console.log(n);
@@ -80,6 +85,14 @@ const actions = {
 }
 
 const mutations = {
+    set_loadMatch(state) {
+        // console.log(state.loadingMatches);
+        state.loadingMatches = true;
+    },
+    unSet_loadMatch(state) {
+        // console.log(state.loadingMatches);
+        state.loadingMatches = false;
+    },
     set_ConfirmMatch (state, data) {
         // alert("The articles " + state.sourceArticle.title.toUpperCase() + " and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are a good match.");
         state.matchArticles[state.matchArticleOnView].isMatch = true
@@ -106,6 +119,7 @@ const mutations = {
                         isMatch : '',
                         data : data[i]
                     };
+                    // console.log(data[i]);
                 } else {
                     obj = {
                         onView : false,
@@ -126,6 +140,11 @@ const mutations = {
         // alert("The articles " + state.sourceArticle.title.toUpperCase() + "and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are not a good match.");
         state.matchArticles[state.matchArticleOnView].isMatch = false;
         state.matchArticles.splice(state.matchArticleOnView, 1);
+        if(state.matchArticleOnView > 0) {
+            state.matchArticleOnView -= 1;
+        } else {
+            state.matchArticleOnView = 0;
+        }
         // if(state.matchArticles[0].isMatch === false && state.matchArticles[1].isMatch === false && state.matchArticles[2].isMatch === false) {
         //     console.log("NEW MATCHES NEEDED!");
         // }
@@ -134,24 +153,14 @@ const mutations = {
         state.listPar[param] = !state.listPar[param]
     },
     setOnview (state, n) {
-        state.matchArticleOnView = n
-        switch(n) {
-            case 0:
-                state.matchArticles[0].onView = true;
-                state.matchArticles[1].onView = false;
-                state.matchArticles[2].onView = false;
-                break;
-            case 1:
-                state.matchArticles[0].onView = false;
-                state.matchArticles[1].onView = true;
-                state.matchArticles[2].onView = false;
-                break;
-            case 2:
-                state.matchArticles[0].onView = false;
-                state.matchArticles[1].onView = false;
-                state.matchArticles[2].onView = true;
-                break;
-        }
+        state.matchArticleOnView = n;
+        state.matchArticles.forEach(function(elem, index){
+            if(index === n) {
+                state.matchArticles[index].onView = true;
+            } else {
+                state.matchArticles[index].onView = false;
+            }
+        });
     }
 }
 
