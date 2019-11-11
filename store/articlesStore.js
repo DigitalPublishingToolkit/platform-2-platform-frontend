@@ -13,7 +13,8 @@ const state = () => ({
         tags: true,
         body: true
     },
-    loadingMatches: false
+    loadingMatches: false,
+    findOverlapBool: true
 })
 
 const getters = {

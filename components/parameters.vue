@@ -53,7 +53,7 @@
             <div class="parameters_column--field field-score">
                 <p class="placeholder">Algorithm match score</p>
                 <div class="score_rating">
-                    <span v-if="Number.isInteger(matchArticleOnView)">{{Number.parseFloat(storeMatchArticles()[matchArticleOnView].data.score * 100).toFixed(2)}}%</span>
+                    <span v-if="Number.isInteger(matchArticleOnView)">{{Number.parseFloat(storeMatchArticles()[matchArticleOnView].data.rate * 100).toFixed(2)}}%</span>
                     <span class="score_rating--noarticle" v-else>-.--</span>
                 </div>
             </div>

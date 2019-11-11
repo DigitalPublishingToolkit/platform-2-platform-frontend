@@ -95,6 +95,9 @@
             loadMatch() {
                 return this.$store.state.articlesStore.loadingMatches
             },
+            findOverlap() {
+                return this.$store.state.articlesStore.findOverlapBool
+            },
             getMatchArticles() {
                 return this.$store.dispatch('articlesStore/get_match')
             },
@@ -165,53 +168,74 @@
                     // console.log(contentHeight, viewportHeight);
                     document.getElementsByClassName("articles_column--right--scrollbar_thumb")[0].style.height = viewportHeight * (viewportHeight / contentHeight) + "px";
 
+                    if(this.findOverlap) {
+                        var vocabLength = this.vocabulary().length;
+                        var findOverlap = false;
 
-                    // find vocabulary
-                    // var findPlainTextExceptInLinks = function(element, substring, callback) {
-                    //     for (var childi= element.childNodes.length; childi-->0;) {
-                    //         var child= element.childNodes[childi];
-                    //         if (child.nodeType===1) {
-                    //             if (child.tagName.toLowerCase()!=='a')
-                    //                 findPlainTextExceptInLinks(child, substring, callback);
-                    //         } else if (child.nodeType===3) {
-                    //             var index= child.data.length;
-                    //             while (true) {
-                    //                 index= child.data.lastIndexOf(substring, index);
-                    //                 if (index===-1)
-                    //                     break;
-                    //                 callback.call(window, child, index)
-                    //             }
-                    //         }
-                    //     }
-                    // };
-                    //
-                    // for(var i = 0; i < this.vocabulary().length; i++) {
-                    //     var substring = this.vocabulary()[i];
-                    //
-                    //     var sourceArticle = document.querySelector(".article.article--source");
-                    //     var sourceArticleBody = sourceArticle.querySelector(".article--data--content.article--data--content_body");
-                    //
-                    //     findPlainTextExceptInLinks(sourceArticleBody, substring, function(node, index) {
-                    //         node.splitText(index + substring.length);
-                    //         var spanHighlight = document.createElement('span');
-                    //         spanHighlight.classList.add('highlight');
-                    //         spanHighlight.appendChild(node.splitText(index));
-                    //         node.parentNode.insertBefore(spanHighlight, node.nextSibling);
-                    //         // console.log(index);
-                    //     });
-                    //
-                    //     var activeMatchArticle = document.querySelector(".article.active");
-                    //     var activeMatchArticleBody = activeMatchArticle.querySelector(".article--data--content.article--data--content_body");
-                    //
-                    //     findPlainTextExceptInLinks(activeMatchArticleBody, substring, function(node, index) {
-                    //         node.splitText(index + substring.length);
-                    //         var spanHighlight = document.createElement('span');
-                    //         spanHighlight.classList.add('highlight');
-                    //         spanHighlight.appendChild(node.splitText(index));
-                    //         node.parentNode.insertBefore(spanHighlight, node.nextSibling);
-                    //         // console.log(index);
-                    //     });
-                    // }
+                        // find vocabulary
+                        var findPlainTextExceptInLinks = function(element, substring, callback) {
+                            for (var childi= element.childNodes.length; childi-->0;) {
+                                var child= element.childNodes[childi];
+                                if (child.nodeType===1) {
+                                    if (child.tagName.toLowerCase()!=='a')
+                                        findPlainTextExceptInLinks(child, substring, callback);
+                                } else if (child.nodeType===3) {
+                                    var index= child.data.length;
+                                    while (true) {
+                                        index= child.data.lastIndexOf(substring, index);
+                                        if (index===-1)
+                                            break;
+                                        callback.call(window, child, index)
+                                    }
+                                }
+                            }
+                        };
+
+                        // var setOverLapToFalse = function() {
+                        //     console.log("hi");
+                        //     $store.state.articlesStore.findOverlapBool = false;
+                        // };
+
+                        for(var i = 0; i < vocabLength; i++) {
+                            var substring = this.vocabulary()[i];
+
+                            var sourceArticle = document.querySelector(".article.article--source");
+                            var sourceArticleBody = sourceArticle.querySelector(".article--data--content.article--data--content_body");
+
+                            findPlainTextExceptInLinks(sourceArticleBody, substring, function(node, index) {
+                                node.splitText(index + substring.length);
+                                var spanHighlight = document.createElement('span');
+                                spanHighlight.classList.add('highlight');
+                                spanHighlight.appendChild(node.splitText(index));
+                                node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                                // console.log(index);
+                            });
+
+                            var activeMatchArticle = document.querySelector(".article.active");
+                            var activeMatchArticleBody = activeMatchArticle.querySelector(".article--data--content.article--data--content_body");
+
+                            findPlainTextExceptInLinks(activeMatchArticleBody, substring, function(node, index) {
+                                node.splitText(index + substring.length);
+                                var spanHighlight = document.createElement('span');
+                                spanHighlight.classList.add('highlight');
+                                spanHighlight.appendChild(node.splitText(index));
+                                node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                                console.log(vocabLength);
+
+                                if(i > 0) {
+                                    console.log("hello");
+                                    // setOverLapToFalse();
+                                    findOverlap = true;
+                                }
+                            });
+
+                            if(findOverlap) {
+                                console.log("goodbye");
+                                this.findOverlap = false;
+                                findOverlap = false;
+                            }
+                        }
+                    }
                 }
             });
         },
@@ -363,6 +387,7 @@
 
     .articles_column--left--scrollbar {
         right: 50vw;
+        margin-right: 2px;
         & .article--scrollbar_thumb {
             right: 0;
         }
@@ -370,6 +395,7 @@
 
     .articles_column--right--scrollbar {
         left: 50.05vw;
+        margin-left: 2px;
         & .article--scrollbar_thumb {
             left: 0;
         }
@@ -377,10 +403,11 @@
 
     .article--scrollbar{
         position: fixed;
-        top: 0;
-        bottom: 0;
+        top: 5px;
+        bottom: 112px;
         width: 3px;
         z-index: 99;
+        overflow: hidden;
 
         &_thumb {
             background-color: $charcoal;
@@ -428,7 +455,7 @@
             transform: rotate(0);
         }
         50%, 100% {
-            transform: rotate(180deg);
+            transform: rotate(90deg);
         }
     }
 
@@ -450,7 +477,7 @@
         position: relative;
         border: 1px solid;
         display: block;
-        animation: rect-rotate 2s linear infinite;
+        animation: rect-rotate 1s linear infinite;
         margin: auto;
     }
 
@@ -462,7 +489,7 @@
         display: block;
         background: $charcoal;
         opacity: 1;
-        animation: fill-rect 2s linear infinite;
+        animation: fill-rect 1s linear infinite;
     }
 
 </style>
