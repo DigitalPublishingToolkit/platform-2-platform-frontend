@@ -379,14 +379,15 @@
         & .article--data--placeholder {
             color: $red;
         }
-        &.yesMatch {
-            background-color: rgba(67, 207, 27, 0.1);
-            border-bottom: 1px solid rgba(67, 207, 27, 0.5);
-            & .article--data--placeholder {
-                color: $green;
-                & svg {
-                    fill: $green;
-                }
+    }
+
+    .yesMatch .requireY {
+        background-color: $white;
+        border-bottom: 1px solid rgba(67, 207, 27, 0.5);
+        & .article--data--placeholder {
+            color: $green;
+            & svg {
+                fill: $green;
             }
         }
     }

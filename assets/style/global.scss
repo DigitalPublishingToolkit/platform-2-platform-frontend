@@ -18,8 +18,11 @@
 }
 
 .highlight {
-  color: $charcoal;
-  border-radius: 2px;
-  font-family: $font-stack-sans;
-  opacity: 0.8;
+  color: $red;
+  font-family: $font-stack-serif;
+  z-index: -1;
+}
+
+.yesMatch .highlight {
+  color: $green;
 }

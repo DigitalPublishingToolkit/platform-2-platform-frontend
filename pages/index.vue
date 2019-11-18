@@ -5,10 +5,21 @@
                 <div class="article--scrollbar_thumb articles_column--left--scrollbar_thumb"></div>
             </div>
 
-            <div class="article--placeholder">
-                <p>Source Article</p>
+            <div v-if="storePreMatchedArticles().length" class="article--placeholder match-tabs">
+                <div class="tab active tab_source">
+                    <p>Source article</p>
+                </div>
+                <div v-for="(match, index) in storePreMatchedArticles()" class="tab" v-bind:data="index">
+                    <p>Match {{index + 1}}</p>
+                </div>
             </div>
+            <div v-else class="article--placeholder">
+                <p>Source article</p>
+            </div>
+
             <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source"></articleComp>
+            <articleComp v-if="storePreMatchedArticles().length" v-for="(match, index) in storePreMatchedArticles()" articleType="matched" :key="index" :articleInd="index" :articleData="match.data" class="article--matched" v-bind:class="{active : match.onView}"></articleComp>
+
         </div>
         <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="scrollBarNow(); handleScroll($event);" v-bind:class="{noArticle : (storeMatchArticles().length === 0)}">
             <div class="articles_column--right--scrollbar article--scrollbar">
@@ -16,19 +27,14 @@
             </div>
 
             <div v-if="storeMatchArticles().length" class="article--placeholder match-tabs">
-                <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index)}" v-bind:data="index" @click="updateView(index)">
-                    <p>Matched Article {{index + 1}}</p>
+                <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index), yesMatch : match.isMatch}" v-bind:data="index" @click="updateView(index)">
+                    <p>Match suggestion {{match.matchIndex}}</p>
                 </div>
             </div>
-            <articleComp v-if="storeMatchArticles().length" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" :isMatch="match.isMatch" class="article--match article--match--1" v-bind:class="{active : match.onView}"></articleComp>
-
-            <div v-if="storePreMatchedArticles().length" class="article--placeholder match-tabs">
-                <div v-for="(match, index) in storePreMatchedArticles()" class="tab" v-bind:data="index" @click="updateView(index)">
-                    <p>Matched Article {{index + 1}}</p>
-                </div>
-            </div>
+            <articleComp v-if="storeMatchArticles().length" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" :isMatch="match.isMatch" class="article--match article--match--1" v-bind:class="{active : match.onView, yesMatch : match.isMatch}"></articleComp>
 
             <div class="noArticle_placeholder" v-if="!storeMatchArticles().length && !loadMatch()">Select criteria and get articles…</div>
+
             <div class="loading_placeholder" v-if="loadMatch()">
                 <div class="loadingContainer">
                     <div class="loader box-rotation"></div>
@@ -220,17 +226,17 @@
                                 spanHighlight.classList.add('highlight');
                                 spanHighlight.appendChild(node.splitText(index));
                                 node.parentNode.insertBefore(spanHighlight, node.nextSibling);
-                                console.log(vocabLength);
+                                // console.log(vocabLength);
 
                                 if(i > 0) {
-                                    console.log("hello");
+                                    // console.log("hello");
                                     // setOverLapToFalse();
                                     findOverlap = true;
                                 }
                             });
 
                             if(findOverlap) {
-                                console.log("goodbye");
+                                // console.log("goodbye");
                                 this.findOverlap = false;
                                 findOverlap = false;
                             }
@@ -287,6 +293,7 @@
             top: 0;
             bottom: 0;
             left: 50%;
+            z-index: 999;
         }
     }
 
@@ -313,6 +320,7 @@
             align-items: stretch;
             padding: 0;
             margin: 0;
+            z-index: 99;
             & .tab {
                 padding: $spacing/2 ($spacing/2 + 6);
                 flex-grow: 1;
@@ -320,6 +328,9 @@
                 color: $white;
                 border-right: 1px solid rgba(255, 255, 255, 0.2);
                 border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                &_source {
+                    flex-grow: 3;
+                }
                 &:last-of-type {
                     border-right: none;
                 }
@@ -406,7 +417,7 @@
         top: 5px;
         bottom: 112px;
         width: 3px;
-        z-index: 99;
+        z-index: 999;
         overflow: hidden;
 
         &_thumb {

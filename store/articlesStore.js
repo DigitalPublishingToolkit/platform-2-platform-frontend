@@ -14,7 +14,8 @@ const state = () => ({
         body: true
     },
     loadingMatches: false,
-    findOverlapBool: true
+    findOverlapBool: true,
+    indexNum: 1
 })
 
 const getters = {
@@ -71,13 +72,16 @@ const actions = {
             score: state.matchArticles[state.matchArticleOnView].data.score,
             timestamp: new Date().toISOString()
         }).then((res) => {
-            console.log(res);
+            // console.log(res);
             commit('set_ConfirmMatch', res.data)
+            commit('setOnview', state.matchArticleOnView);
+            commit('check_MatchValue');
         })
     },
     deny_match({ commit, state }) {
         commit('set_denyMatch');
         commit('setOnview', state.matchArticleOnView);
+        commit('check_MatchValue');
     }
     // updateViewArticle({ commit }, n) {
     //     console.log(n);
@@ -94,21 +98,50 @@ const mutations = {
         // console.log(state.loadingMatches);
         state.loadingMatches = false;
     },
+    check_MatchValue(state) {
+        state.matchArticles.forEach(function(elem, i){
+            if(state.matchArticles[i].isMatch === '') {
+                return;
+            } else if (i === state.matchArticles.length - 1) {
+                let newMatches = state.matchPool.splice(0, 3);
+                newMatches[0].onView = true;
+
+                newMatches.forEach(function(elem, i){
+                    state.matchArticles.push(newMatches[i]);
+                });
+            }
+        })
+    },
     set_ConfirmMatch (state, data) {
         // alert("The articles " + state.sourceArticle.title.toUpperCase() + " and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are a good match.");
-        state.matchArticles[state.matchArticleOnView].isMatch = true
+        state.matchArticles[state.matchArticleOnView].isMatch = true;
+        let confirmedMatch = state.matchArticles.splice(state.matchArticleOnView, 1);
+        state.preMatchedArticles.push(confirmedMatch[0]);
+        // console.log(state.preMatchedArticles);
+        if(state.matchArticleOnView > 0) {
+            state.matchArticleOnView -= 1;
+        } else {
+            state.matchArticleOnView = 0;
+        }
     },
     set_sourceAr (state, data) {
         state.sourceArticle = data;
         if(data.matches.length > 0) {
             state.preMatchedArticles = data.matches;
         }
+
+        if(data.author.length <= 0) {
+            state.listPar.author = false;
+        }
+
+        if(data.tags.length <= 0) {
+            state.listPar.tags = false;
+        }
     },
     changeLockedScroll (state) {
         state.scrollLock = !state.scrollLock
     },
     set_matchAr (state, data) {
-        // console.log(data)
         state.matchArticleOnView = 0;
 
         data.forEach(function(elem, i){
@@ -118,6 +151,7 @@ const mutations = {
                     obj = {
                         onView : true,
                         isMatch : '',
+                        matchIndex: state.indexNum,
                         data : data[i]
                     };
                     // console.log(data[i]);
@@ -125,12 +159,22 @@ const mutations = {
                     obj = {
                         onView : false,
                         isMatch : '',
+                        matchIndex: state.indexNum,
                         data : data[i]
                     };
                 }
                 state.matchArticles.push(obj);
+                state.indexNum++;
             } else {
-                state.matchPool.push(data);
+                let obj = {
+                    onView : false,
+                    isMatch : '',
+                    matchIndex: state.indexNum,
+                    data : data[i]
+                };
+
+                state.matchPool.push(obj);
+                state.indexNum++;
             }
         });
         // state.matchArticles[0].data = data[0];
@@ -145,6 +189,15 @@ const mutations = {
             state.matchArticleOnView -= 1;
         } else {
             state.matchArticleOnView = 0;
+        }
+
+        if(state.matchArticles.length <= 0) {
+            let newMatches = state.matchPool.splice(0, 3);
+            newMatches[0].onView = true;
+
+            newMatches.forEach(function(elem, i){
+                state.matchArticles.push(newMatches[i]);
+            });
         }
         // if(state.matchArticles[0].isMatch === false && state.matchArticles[1].isMatch === false && state.matchArticles[2].isMatch === false) {
         //     console.log("NEW MATCHES NEEDED!");
