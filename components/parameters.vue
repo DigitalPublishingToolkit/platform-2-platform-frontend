@@ -2,14 +2,12 @@
     <div class="parameters">
         <div class="popup-wrapper" v-if="isMatch === true" @click="isMatch = null">
             <div class="popup">
-                Thank you. <br><br>
-                <strong>{{storeSourceArticle.title}}</strong> and <strong>{{storeMatchArticles()[matchArticleOnView].title}}</strong> are saved as a match.
+                Article is saved as a match.
             </div>
         </div>
         <div class="popup-wrapper" v-if="isMatch === false" @click="isMatch = null">
             <div class="popup">
-                Thank you. <br><br>
-                <strong>{{storeSourceArticle.title}}</strong> and <strong>{{storeMatchArticles()[matchArticleOnView].title}}</strong> are saved as not a match.
+                Article is removed as a match.
             </div>
         </div>
         <div class="parameters_column parameters_column--left">
@@ -19,33 +17,31 @@
                 <form action="" class="parameters_form">
                     <div class="parameters_form--option" v-bind:class="{active : paramList.title}">
                         <label for="title">Title</label>
-                        <input type="checkbox" id="title" value="title" :checked="paramList.title" @click="toggle('title')">
+                        <input type="checkbox" id="title" value="title" :checked="paramList.title" @click="toggle('title')" disabled>
                     </div>
 
-                    <div class="parameters_form--option" v-bind:class="{active : paramList.author}">
+                    <div class="parameters_form--option" v-bind:class="{active : paramList.author, disabled : (storeSourceArticle.author.length <= 0)}">
                         <label for="author">Author</label>
-                        <input type="checkbox" id="author" value="author" :checked="paramList.author" @click="toggle('author')">
+                        <input v-if="storeSourceArticle.author.length <= 0" type="checkbox" id="author" value="author" :checked="paramList.author" disabled="true">
+                        <input v-else type="checkbox" id="author" value="author" :checked="paramList.author" @click="toggle('author')" disabled>
                     </div>
 
-                    <div class="parameters_form--option" v-bind:class="{active : paramList.tags}">
+                    <div class="parameters_form--option" v-bind:class="{active : paramList.tags, disabled : (storeSourceArticle.tags.length <= 0)}">
                         <label for="tags">Tags</label>
-                        <input type="checkbox" id="tags" value="tags" :checked="paramList.tags" @click="toggle('tags')">
+                        <input v-if="storeSourceArticle.tags.length <= 0" type="checkbox" id="tags" value="tags" :checked="paramList.tags" disabled="true">
+                        <input v-else type="checkbox" id="tags" value="tags" :checked="paramList.tags" @click="toggle('tags')" disabled>
                     </div>
 
                     <div class="parameters_form--option" v-bind:class="{active : paramList.body}">
                         <label for="body">Body text</label>
-                        <input type="checkbox" id="body" value="body" :checked="paramList.body" @click="toggle('body')">
+                        <input type="checkbox" id="body" value="body" :checked="paramList.body" @click="toggle('body')" disabled>
                     </div>
                 </form>
                 <div v-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (!storeMatchArticles().length)" class="parameters_button parameters_form--submit" @click="getMatchArticles(); loadingMatches(); matchesLoadedTimeOut();">Get Matches</div>
-                <div v-else-if="!storeMatchArticles().length" class="parameters_button parameters_form--submit--noparams">Get Matches</div>
-                <div v-else-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (storeMatchArticles().length)" class="parameters_button parameters_form--submit" @click="getMatchArticles()">Get new pool ↺</div>
-                <div v-else class="parameters_button parameters_form--submit--noparams">Get new pool ↺</div>
+                <div v-else class="parameters_button parameters_form--submit--noparams">Get Matches</div>
+<!--                <div v-else-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (storeMatchArticles().length)" class="parameters_button parameters_form&#45;&#45;submit" @click="getMatchArticles()">Get new pool ↺</div>-->
+<!--                <div v-else class="parameters_button parameters_form&#45;&#45;submit&#45;&#45;noparams">Get new pool ↺</div>-->
             </div>
-<!--            <div class="parameters_column&#45;&#45;field field-getmatch">-->
-<!--                <p class="placeholder">Get new matches</p>-->
-<!--                -->
-<!--            </div>-->
         </div>
 
         <!-- RIGHT COLUMN -->
@@ -61,40 +57,37 @@
             <div class="parameters_column--field field-user-score">
                 <p class="placeholder">Your rating</p>
                 <form>
-<!--                    <label for="slider">{{value}}</label>-->
-<!--                    <input id="slider" type="range" min="1" max="10" value="5" v-model="value">-->
-                    <label>1</label>
-                    <input type="radio" value="1" name="user-rating">
-                    <label>2</label>
-                    <input type="radio" value="2" name="user-rating">
-                    <label>3</label>
-                    <input type="radio" value="3" name="user-rating">
-                    <label>4</label>
-                    <input type="radio" value="4" name="user-rating">
-                    <label>5</label>
-                    <input type="radio" value="5" name="user-rating">
-                    <label>6</label>
-                    <input type="radio" value="6" name="user-rating">
-                    <label>7</label>
-                    <input type="radio" value="7" name="user-rating">
-                    <label>8</label>
-                    <input type="radio" value="8" name="user-rating">
-                    <label>9</label>
-                    <input type="radio" value="9" name="user-rating">
-                    <label>10</label>
-                    <input type="radio" value="10" name="user-rating">
+                    <div class="parameters_score--option">
+                        <label>1</label>
+                        <input v-if="storeMatchArticles().length" type="radio" value="1" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-else type="radio" value="1" disabled>
+                    </div>
+                    <div class="parameters_score--option">
+                        <label>2</label>
+                        <input v-if="storeMatchArticles().length" type="radio" value="2" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-else type="radio" value="2" disabled>
+                    </div>
+                    <div class="parameters_score--option">
+                        <label>3</label>
+                        <input v-if="storeMatchArticles().length" type="radio" value="3" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-else type="radio" value="3" disabled>
+                    </div>
+                    <div class="parameters_score--option">
+                        <label>4</label>
+                        <input v-if="storeMatchArticles().length" type="radio" value="4" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-else type="radio" value="4" disabled>
+                    </div>
+                    <div class="parameters_score--option">
+                        <label>5</label>
+                        <input v-if="storeMatchArticles().length" type="radio" value="5" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-else type="radio" value="5" disabled>
+                    </div>
                 </form>
             </div>
 
-<!--            <div class="parameters_column&#45;&#45;field field-scrollsync">-->
-<!--                <p class="placeholder">Synced scrolling</p>-->
-<!--                <div class="parameters_button active" v-if="scrollLock" @click="lockedScroll">Toggle sync off</div>-->
-<!--                <div class="parameters_button inactive" v-else @click="lockedScroll">Toggle sync on</div>-->
-<!--            </div>-->
-
             <div class="parameters_column--field field-matchmaking">
                 <p class="placeholder">Match or no match</p>
-<!--                    !storeMatchArticles()[matchArticleOnView].isMatch-->
+                <!--                    !storeMatchArticles()[matchArticleOnView].isMatch-->
                 <div v-if="storeMatchArticles().length">
                     <div class="parameters_button parameters_matchmaking--yes" @click="serveSetMatch()">Yes, it is</div>
                     <span class="divider-slash">/</span>
@@ -128,13 +121,14 @@
             },
             matchArticleOnView() {
                 return this.$store.state.articlesStore.matchArticleOnView
-            },
+            }
         },
         data() {
             return {
                 showParameters: true,
                 isMatch: null,
                 value: 5,
+                scoreVal: ''
             }
         },
         methods: {
@@ -147,12 +141,13 @@
                 this.unSetMatchArticle();
             },
             getMatchArticles() {
-                // this.loadingMatches();
-                // document.getElementsByClassName("noArticle_placeholder")[0].innerHTML = "LOADING!";
                 return this.$store.dispatch('articlesStore/get_match');
             },
             storeMatchArticles() {
                 return this.$store.state.articlesStore.matchArticles;
+            },
+            storePreMatchedArticles() {
+                return this.$store.state.articlesStore.preMatchedArticles
             },
             setMatchArticle() {
                 return this.$store.dispatch('articlesStore/confirm_match');
@@ -162,12 +157,13 @@
             },
             ...mapMutations({
                 toggle: 'articlesStore/toggleThis',
+                score: 'articlesStore/scoreThis',
                 lockedScroll: 'articlesStore/changeLockedScroll',
                 loadingMatches: 'articlesStore/set_loadMatch',
                 matchesLoaded: 'articlesStore/unSet_loadMatch'
             }),
             matchesLoadedTimeOut(){
-                setTimeout(this.matchesLoaded, 10000);
+                setTimeout(this.matchesLoaded, 5000);
             }
         },
     }
@@ -189,7 +185,19 @@
         left: 0;
         background-color: $white;
         border-top: 1px solid $charcoal;
-        z-index: 998;
+        z-index: 99999;
+        &_score--option {
+            padding: 0;
+            display: inline-block;
+            margin: 0 $spacing*0.75 0 0;
+            border-radius: 0;
+            font-size: 20px;
+            line-height: 46px;
+            /*border-bottom: 2px solid rgba(49, 49, 49, 1);*/
+            &:first-of-type {
+                margin: 0 $spacing*0.75 0 $spacing*1.5;
+            }
+        }
 
         & .parameters_column {
             width: 50%;
@@ -269,6 +277,25 @@
                     background-color: rgba(0, 0, 0, 0.1);
                     & * {
                         cursor: pointer;
+                    }
+                }
+                &.disabled {
+                    opacity: 0.6;
+                    &:hover {
+                        cursor: default !important;
+                        background-color: transparent;
+                    }
+                    & label {
+                        &:hover {
+                            cursor: default !important;
+                            background-color: transparent;
+                        }
+                    }
+                    & input {
+                        &:hover {
+                            cursor: default !important;
+                            background-color: transparent;
+                        }
                     }
                 }
                 & label {
@@ -387,6 +414,7 @@
     }
 
     .popup {
+        display: flex;
         padding: $spacing;
         font-size: 20px;
         line-height: 26px;
@@ -394,6 +422,11 @@
         left: 25%;
         width: 50%;
         height: 20%;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        align-content: center;
+        /*line-height: 100%;*/
         border: 1px solid rgba(49, 49, 49, 1);
         /*left: 1px;*/
         /*top: 1px;*/

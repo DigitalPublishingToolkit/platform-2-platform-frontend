@@ -1,15 +1,15 @@
 <template>
     <div class="main_articles">
         <div id="left-column" class="main_articles_column main_articles_column--left" v-on:scroll="scrollBarNow(); handleScroll($event);">
-            <div class="articles_column--left--scrollbar article--scrollbar">
-                <div class="article--scrollbar_thumb articles_column--left--scrollbar_thumb"></div>
+            <div class="articles_column--left--scrollbar article--scrollbar" :class="{together: scrollLock}">
+                <div class="article--scrollbar_thumb articles_column--left--scrollbar_thumb" @click="lockedScroll()"></div>
             </div>
 
             <div v-if="storePreMatchedArticles().length" class="article--placeholder match-tabs">
-                <div class="tab active tab_source">
+                <div class="tab tab_source" @click="showSourceNow()" :class="{active: showSource}">
                     <p>Source article</p>
                 </div>
-                <div v-for="(match, index) in storePreMatchedArticles()" class="tab" v-bind:data="index">
+                <div v-for="(match, index) in storePreMatchedArticles()" class="tab" v-bind:data="index" @click="showPreMatch(index)" :class="{active : showMatchedArticle(index)}">
                     <p>Match {{index + 1}}</p>
                 </div>
             </div>
@@ -17,17 +17,17 @@
                 <p>Source article</p>
             </div>
 
-            <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source"></articleComp>
-            <articleComp v-if="storePreMatchedArticles().length" v-for="(match, index) in storePreMatchedArticles()" articleType="matched" :key="index" :articleInd="index" :articleData="match.data" class="article--matched" v-bind:class="{active : match.onView}"></articleComp>
+            <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source" :class="{active: showSource}"></articleComp>
+            <articleComp v-if="storePreMatchedArticles().length" v-for="(match, index) in storePreMatchedArticles()" articleType="matched" :key="index" :articleInd="index" :articleData="match.data" class="article--matched" v-bind:class="{active : showMatchedArticle(index)}"></articleComp>
 
         </div>
         <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="scrollBarNow(); handleScroll($event);" v-bind:class="{noArticle : (storeMatchArticles().length === 0)}">
-            <div class="articles_column--right--scrollbar article--scrollbar">
-                <div class="article--scrollbar_thumb articles_column--right--scrollbar_thumb"></div>
+            <div class="articles_column--right--scrollbar article--scrollbar" :class="{together: scrollLock}">
+                <div class="article--scrollbar_thumb articles_column--right--scrollbar_thumb" @click="lockedScroll()"></div>
             </div>
 
             <div v-if="storeMatchArticles().length" class="article--placeholder match-tabs">
-                <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index), yesMatch : match.isMatch}" v-bind:data="index" @click="updateView(index)">
+                <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index), yesMatch : match.isMatch}" v-bind:data="index" @click="updateView(index); highlightTagsTitle();">
                     <p>Match suggestion {{match.matchIndex}}</p>
                 </div>
             </div>
@@ -70,7 +70,10 @@
         },
         data() {
             return {
-                checkedParameters: []
+                checkedParameters: [],
+                showSource: true,
+                showPreMatchedArticle: [],
+                showPreMatchIndex: 0
             }
         },
         mounted() {
@@ -87,17 +90,19 @@
             }),
             ...mapMutations({
                 updateView: 'articlesStore/setOnview',
-                lockedScroll: 'articlesStore/changeLockedScroll'
+                lockedScroll: 'articlesStore/changeLockedScroll',
+                toggleOverLap: 'articlesStore/overLapFalse'
             }),
-            // removePreviousSpans() {
-            //     var sourceArticle = document.querySelector(".article.article--source");
-            //     var sourceArticleBody = sourceArticle.querySelector(".article--data--content.article--data--content_body");
-            //     var allSourceSpans = sourceArticleBody.querySelectorAll("span");
-            //
-            //     allSourceSpans.forEach(function(elem, index){
-            //         elem.classList.remove("highlight");
-            //     });
-            // },
+            showSourceNow() {
+                this.showSource = true;
+            },
+            showPreMatch(ind) {
+                this.showPreMatchIndex = ind;
+                this.showSource = false;
+            },
+            showMatchedArticle(ind) {
+                return (this.showPreMatchIndex === ind) && !this.showSource
+            },
             loadMatch() {
                 return this.$store.state.articlesStore.loadingMatches
             },
@@ -112,6 +117,39 @@
             },
             storePreMatchedArticles() {
                 return this.$store.state.articlesStore.preMatchedArticles
+            },
+            highlightTagsTitle() {
+                // console.log("hi");
+
+                let allSimilar = document.querySelectorAll('.similar');
+                allSimilar.forEach(function(similarNode, ind) {
+                    similarNode.classList.remove('similar');
+                });
+
+                const sourceArticle = document.querySelector("#left-column .article--source");
+                const sourceTags = sourceArticle.querySelectorAll('.article--data--content_tags_tag');
+
+                const activeMatchArticle = document.querySelector(".article--match.active");
+                const activeMatchTags = activeMatchArticle.querySelectorAll('.article--data--content_tags_tag');
+
+                sourceTags.forEach(function(sourceTagNode, sourceInd) {
+                    activeMatchTags.forEach(function(matchTagNode, matchInd) {
+                        if(sourceTagNode.innerHTML.trim().toLowerCase() === matchTagNode.innerHTML.trim().toLowerCase()) {
+                            sourceTagNode.classList.add('similar');
+                            matchTagNode.classList.add('similar');
+                        }
+                    });
+                });
+
+                let allCurrentSpans = document.querySelectorAll('span[matchindex]');
+
+                for(let spanInd = 0; spanInd < allCurrentSpans.length; spanInd++) {
+                    if(allCurrentSpans[spanInd].getAttribute('matchindex') === (''+this.matchArticleOnView+'')) {
+                        allCurrentSpans[spanInd].classList.add('highlight');
+                    } else {
+                        // allCurrentSpans[spanInd].classList.remove('highlight');
+                    }
+                }
             },
             handleScroll: function(e) {
                 if(this.scrollLock) {
@@ -146,7 +184,6 @@
                 switch(scrollTargetClass) {
                     case("main_articles_column--left"):
                         contentHeight = document.getElementsByClassName("article article--source")[0].clientHeight;
-                        // console.log(contentHeight);
                         viewportHeight = document.getElementById("left-column").clientHeight;
                         contentScroll = document.getElementById("left-column").scrollTop;
                         document.getElementsByClassName("articles_column--left--scrollbar_thumb")[0].style.top = Math.ceil(contentScroll * (viewportHeight / contentHeight)) + "px";
@@ -154,8 +191,7 @@
                         break;
                     case("main_articles_column--right"):
                         if(this.storeMatchArticles().length > 0) {
-                            contentHeight = document.getElementsByClassName("article active")[0].clientHeight;
-                            // console.log(contentHeight);
+                            contentHeight = document.getElementsByClassName("article--match active")[0].clientHeight;
                             viewportHeight = document.getElementById("right-column").clientHeight;
                             contentScroll = document.getElementById("right-column").scrollTop;
                             document.getElementsByClassName("articles_column--right--scrollbar_thumb")[0].style.top = Math.ceil(contentScroll * (viewportHeight / contentHeight)) + "px";
@@ -163,83 +199,127 @@
                         break;
                 }
 
+            },
+            findPlainText: function(element, substring, callback) {
+                for (let childi = element.childNodes.length; childi-->0;) {
+                    let child= element.childNodes[childi];
+                    if (child.nodeType===1) {
+                        if (child.tagName.toLowerCase()!=='a')
+                            this.findPlainText(child, substring, callback);
+                    } else if (child.nodeType===3) {
+                        let index = child.data.length;
+                        while (true) {
+                            index = child.data.lastIndexOf(substring, index);
+                            if (index === -1)
+                                break;
+                            callback.call(window, child, index)
+                        }
+                    }
+                }
             }
         },
         updated: function() {
             this.$nextTick(function () {
 
                 if(this.storeMatchArticles().length > 0) {
-                    var contentHeight = document.getElementsByClassName("article active")[0].clientHeight;
-                    var viewportHeight = document.getElementById("right-column").clientHeight;
-                    // console.log(contentHeight, viewportHeight);
+                    // Scroll bars
+                    let contentHeight = document.getElementsByClassName("article--match active")[0].clientHeight;
+                    let viewportHeight = document.getElementById("right-column").clientHeight;
                     document.getElementsByClassName("articles_column--right--scrollbar_thumb")[0].style.height = viewportHeight * (viewportHeight / contentHeight) + "px";
 
+                    // Find similar tags and title words
+                    this.highlightTagsTitle();
+
+                    // console.log(this.findOverlap(), this.matchArticleOnView);
+                    // Set overlap once
                     if(this.findOverlap) {
-                        var vocabLength = this.vocabulary().length;
-                        var findOverlap = false;
 
-                        // find vocabulary
-                        var findPlainTextExceptInLinks = function(element, substring, callback) {
-                            for (var childi= element.childNodes.length; childi-->0;) {
-                                var child= element.childNodes[childi];
-                                if (child.nodeType===1) {
-                                    if (child.tagName.toLowerCase()!=='a')
-                                        findPlainTextExceptInLinks(child, substring, callback);
-                                } else if (child.nodeType===3) {
-                                    var index= child.data.length;
-                                    while (true) {
-                                        index= child.data.lastIndexOf(substring, index);
-                                        if (index===-1)
-                                            break;
-                                        callback.call(window, child, index)
-                                    }
-                                }
-                            }
-                        };
+                        let findOverlap = false;
+                        let matchArticles = document.querySelectorAll(".article--match");
 
-                        // var setOverLapToFalse = function() {
-                        //     console.log("hi");
-                        //     $store.state.articlesStore.findOverlapBool = false;
-                        // };
+                        const sourceArticle = document.querySelector(".article.article--source");
+                        const sourceArticleBody = sourceArticle.querySelector(".article--data--content.article--data--content_body");
+                        const sourceArticleTitle = sourceArticle.querySelector(".article--data--content.article--data--content_title");
+                        const sourceArticleTitleArr = sourceArticleTitle.innerHTML.split(' ');
+                        let sourceArticleTitleArrNew = [];
 
-                        for(var i = 0; i < vocabLength; i++) {
-                            var substring = this.vocabulary()[i];
+                        sourceArticleTitleArr.forEach(function(item, index) {
+                            if(item.length > 2) sourceArticleTitleArrNew.push(item);
+                        });
 
-                            var sourceArticle = document.querySelector(".article.article--source");
-                            var sourceArticleBody = sourceArticle.querySelector(".article--data--content.article--data--content_body");
+                        for(let i = 0; i < this.storeMatchArticles().length; i++) {
+                            let article = this.storeMatchArticles()[i].data;
 
-                            findPlainTextExceptInLinks(sourceArticleBody, substring, function(node, index) {
-                                node.splitText(index + substring.length);
-                                var spanHighlight = document.createElement('span');
-                                spanHighlight.classList.add('highlight');
-                                spanHighlight.appendChild(node.splitText(index));
-                                node.parentNode.insertBefore(spanHighlight, node.nextSibling);
-                                // console.log(index);
+                            let activeMatchArticleBody = matchArticles[i].querySelector(".article--data--content.article--data--content_body");
+                            let activeMatchArticleTitle = matchArticles[i].querySelector(".article--data--content.article--data--content_title");
+                            let activeMatchArticleTitleArr = activeMatchArticleTitle.innerHTML.split(' ');
+                            let activeMatchArticleTitleArrNew = [];
+
+                            activeMatchArticleTitleArr.forEach(function(item, index) {
+                                if(item.length > 2) activeMatchArticleTitleArrNew.push(item);
                             });
 
-                            var activeMatchArticle = document.querySelector(".article.active");
-                            var activeMatchArticleBody = activeMatchArticle.querySelector(".article--data--content.article--data--content_body");
+                            if(sourceArticleTitleArrNew.length > 1) {
+                                for(let sourceTitleInd = 0; sourceTitleInd < sourceArticleTitleArrNew.length; sourceTitleInd++) {
+                                    // console.log(sourceArticleTitleArrNew[sourceTitleInd]);
+                                    let substring = sourceArticleTitleArrNew[sourceTitleInd];
 
-                            findPlainTextExceptInLinks(activeMatchArticleBody, substring, function(node, index) {
-                                node.splitText(index + substring.length);
-                                var spanHighlight = document.createElement('span');
-                                spanHighlight.classList.add('highlight');
-                                spanHighlight.appendChild(node.splitText(index));
-                                node.parentNode.insertBefore(spanHighlight, node.nextSibling);
-                                // console.log(vocabLength);
-
-                                if(i > 0) {
-                                    // console.log("hello");
-                                    // setOverLapToFalse();
-                                    findOverlap = true;
+                                    this.findPlainText(activeMatchArticleTitle, substring, function(node, index) {
+                                        node.splitText(index + substring.length);
+                                        const spanHighlight = document.createElement('span');
+                                        spanHighlight.setAttribute('matchIndex', i);
+                                        spanHighlight.appendChild(node.splitText(index));
+                                        node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                                    });
                                 }
-                            });
-
-                            if(findOverlap) {
-                                // console.log("goodbye");
-                                this.findOverlap = false;
-                                findOverlap = false;
                             }
+                            if(activeMatchArticleTitleArrNew.length > 1) {
+                                for(let matchTitleInd = 0; matchTitleInd < activeMatchArticleTitleArrNew.length; matchTitleInd++) {
+                                    // console.log(activeMatchArticleTitleArrNew[sourceTitleInd]);
+                                    let substring = activeMatchArticleTitleArrNew[matchTitleInd];
+
+                                    this.findPlainText(sourceArticleTitle, substring, function(node, index) {
+                                        node.splitText(index + substring.length);
+                                        const spanHighlight = document.createElement('span');
+                                        spanHighlight.setAttribute('matchIndex', i);
+                                        spanHighlight.appendChild(node.splitText(index));
+                                        node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                                    });
+                                }
+                            }
+
+                            // finding vocabulary
+                            for(let vocabi = 0; vocabi < article.vocabulary.length; vocabi++) {
+                                let substring = ' ' + article.vocabulary[vocabi] + ' ';
+
+                                this.findPlainText(sourceArticleBody, substring, function(node, index) {
+                                    node.splitText(index + substring.length);
+                                    const spanHighlight = document.createElement('span');
+                                    spanHighlight.setAttribute('matchIndex', i);
+                                    spanHighlight.appendChild(node.splitText(index));
+                                    node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                                });
+
+                                this.findPlainText(activeMatchArticleBody, substring, function(node, index) {
+                                    node.splitText(index + substring.length);
+                                    const spanHighlight = document.createElement('span');
+                                    spanHighlight.setAttribute('matchIndex', i);
+                                    spanHighlight.appendChild(node.splitText(index));
+                                    node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                                });
+                            }
+
+                            if(i > 0) {
+                                findOverlap = true;
+                            }
+                        }
+
+                        if(findOverlap) {
+                            this.findOverlap = false;
+                            this.toggleOverLap();
+                            findOverlap = false;
+
+                            this.highlightTagsTitle();
                         }
                     }
                 }
@@ -281,7 +361,7 @@
                 right: 0;
                 transition: background-color 0.2s ease;
                 &.noArticle {
-                    background-color: rgba(0, 0, 0, 0.1);
+                    /*background-color: rgba(0, 0, 0, 0.1);*/
                 }
             }
         }
@@ -294,6 +374,20 @@
             bottom: 0;
             left: 50%;
             z-index: 999;
+        }
+    }
+
+    .article--source {
+        display: none;
+        &.active {
+            display: block;
+        }
+    }
+
+    .article--matched {
+        display: none;
+        &.active {
+            display: block;
         }
     }
 
@@ -399,6 +493,9 @@
     .articles_column--left--scrollbar {
         right: 50vw;
         margin-right: 2px;
+        &.together {
+            margin-right: 0;
+        }
         & .article--scrollbar_thumb {
             right: 0;
         }
@@ -407,6 +504,9 @@
     .articles_column--right--scrollbar {
         left: 50.05vw;
         margin-left: 2px;
+        &.together {
+            margin-left: 0;
+        }
         & .article--scrollbar_thumb {
             left: 0;
         }
@@ -416,16 +516,16 @@
         position: fixed;
         top: 5px;
         bottom: 112px;
-        width: 3px;
+        width: 4px;
         z-index: 999;
         overflow: hidden;
 
         &_thumb {
             background-color: $charcoal;
             position: absolute;
-            width: 100%;
+            width: 3px;
             &:hover {
-                width: 6px;
+                width: 4px;
                 cursor: pointer;
             }
         }

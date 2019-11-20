@@ -2,7 +2,7 @@
     <div class="main">
         <div id="modal" class="hide">
             <div class="modal--group" @click="closeModal()">
-                <div class="modal--group_remove" @click="closeModal()">[close]</div>
+                <div class="modal--group_remove">[close]</div>
             </div>
         </div>
         <parameters></parameters>
@@ -21,8 +21,8 @@
         methods: {
             closeModal: function(){
                 const modal = document.getElementById("modal");
-                const modalGroup = document.getElementsByClassName("modal--group")[0];
-                modalGroup.childNodes[1].remove();
+                const modalGroup = document.querySelector(".modal--group");
+                modalGroup.querySelector('img').remove();
                 modal.classList.remove("show");
                 modal.classList.add("hide");
             }
@@ -44,7 +44,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 9999;
+        z-index: 9999999;
         background-color: rgba(0, 0, 0, 0.85);
         &.hide {
             display: none;

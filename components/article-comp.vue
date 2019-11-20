@@ -39,7 +39,7 @@
                 {{articleData.author}}
             </div>
             <div v-else class="article--data--content article--data--content_none">
-                Not found…
+                Couldn't find author to scrape…
             </div>
         </div>
 
@@ -57,7 +57,7 @@
                 <span class="article--data--content_tags_tag" v-for="tag in articleData.tags">{{tag}}</span>
             </div>
             <div v-else class="article--data--content article--data--content_none">
-                Not found…
+                None found to scrape…
             </div>
         </div>
 
@@ -69,7 +69,7 @@
                 {{articleData.abstract}}
             </div>
             <div v-else class="article--data--content article--data--content_none">
-                Not found…
+                No abstract found to scrape…
             </div>
         </div>
 
@@ -89,7 +89,7 @@
                 </p>
             </div>
             <div v-else class="article--data--content article--data--content_body">
-                <p class="article--data--content_body_paragraph" v-for="item in getRightMatchArticle(articleInd)">
+                <p class="article--data--content_body_paragraph" v-for="item in articleData.body">
                     {{item}}
                 </p>
             </div>
@@ -159,10 +159,6 @@
                 return this.$store.state.articlesStore.matchArticleOnView
             },
         },
-        mounted() {
-            // console.log(this.$refs.titleEle.clientHeight);
-            // this.adjustH({key: 'title', amount: this.$refs.titleEle.clientHeight + 1});
-        },
         methods: {
             checkIfMatch() {
                 if(isNaN(matchArticleOnView)) {
@@ -172,25 +168,8 @@
             storeMatchArticles() {
                 return this.$store.state.articlesStore.matchArticles
             },
-            getRightMatchArticle: function(index) {
-                switch(index) {
-                    case 0:
-                        // console.log(this.matchBodyTextArray_1());
-                        return this.matchBodyTextArray_1();
-                        break;
-                    case 1:
-                        return this.matchBodyTextArray_2();
-                        break;
-                    case 2:
-                        return this.matchBodyTextArray_3();
-                        break;
-                }
-            },
             ...mapGetters({
                 sourceBodyTextArray: 'articlesStore/sourceBodyAsArray',
-                matchBodyTextArray_1: 'articlesStore/matchBodyAsArray_1',
-                matchBodyTextArray_2: 'articlesStore/matchBodyAsArray_2',
-                matchBodyTextArray_3: 'articlesStore/matchBodyAsArray_3'
             }),
             ...mapActions({
                 adjustH: 'cellHeights/changeHeight'
@@ -313,6 +292,9 @@
                         border-radius: 2px;
                         display: inline-block;
                         margin-bottom: 6px;
+                        &.similar {
+                            background-color: rgba(255, 87, 67, 0.4);;
+                        }
                     }
                 }
                 &_abstract {
@@ -320,9 +302,8 @@
                 }
                 &_footnotes {
                     /*list-style: none;*/
-                    padding: 0;
+                    padding: 0 0 0 18px;
                     word-break: break-word;
-                    padding-left: 18px;
                     &_footnote {
 
                     }
@@ -370,6 +351,9 @@
         background-color: rgba(255, 87, 67, 0.05);
         border-bottom: 1px solid rgba(255, 87, 67, 0.5);
         transition: background-color 0.2s linear;
+        &:last-of-type {
+            border-bottom: none;
+        }
         &:hover {
             border-bottom: 1px solid rgba(255, 87, 67, 1);
         }
@@ -378,6 +362,24 @@
         }
         & .article--data--placeholder {
             color: $red;
+        }
+    }
+
+    .article--matched .requireY {
+        background-color: $white;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s linear;
+        &:last-of-type {
+            border-bottom: none;
+        }
+        &:hover {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        }
+        & .article--data--content_tags_tag {
+            /*background-color: rgba(255, 87, 67, 0.6);*/
+        }
+        & .article--data--placeholder {
+            color: rgba(0, 0, 0, 0.4);
         }
     }
 

@@ -17,12 +17,11 @@
   display: none;
 }
 
-.highlight {
-  color: $red;
+span[matchindex] {
   font-family: $font-stack-serif;
-  z-index: -1;
-}
-
-.yesMatch .highlight {
-  color: $green;
+  &.highlight {
+    color: rgba(179, 61, 47, 1);
+    font-family: $font-stack-serif;
+    z-index: -1;
+  }
 }
