@@ -62,7 +62,7 @@ const actions = {
             score: parseInt(state.matchArticles[state.matchArticleOnView].data.score),
             timestamp: new Date().toISOString()
         }).then((res) => {
-            console.log(res);
+            // console.log(res);
             commit('set_ConfirmMatch', res.data)
             commit('setOnview', state.matchArticleOnView);
             commit('check_MatchValue');
@@ -102,7 +102,9 @@ const mutations = {
     set_ConfirmMatch (state, data) {
         state.matchArticles[state.matchArticleOnView].isMatch = true;
         state.matchArticles[state.matchArticleOnView].onView = false;
+
         let confirmedMatch = state.matchArticles.splice(state.matchArticleOnView, 1);
+
         state.preMatchedArticles.push(confirmedMatch[0]);
         // console.log(state.preMatchedArticles);
         if(state.matchArticleOnView > 0) {
@@ -152,7 +154,7 @@ const mutations = {
                         matchIndex: state.indexNum,
                         data : data[i]
                     };
-                    console.log(data[i]);
+                    // console.log(data[i]);
                 } else {
                     obj = {
                         onView : false,
