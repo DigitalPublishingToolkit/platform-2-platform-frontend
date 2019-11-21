@@ -59,27 +59,27 @@
                 <form>
                     <div class="parameters_score--option">
                         <label>1</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="1" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-if="storeMatchArticles().length" type="radio" value="1" name="user-rating" v-model="scoreVal" @click="score(1)">
                         <input v-else type="radio" value="1" disabled>
                     </div>
                     <div class="parameters_score--option">
                         <label>2</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="2" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-if="storeMatchArticles().length" type="radio" value="2" name="user-rating" v-model="scoreVal" @click="score(2)">
                         <input v-else type="radio" value="2" disabled>
                     </div>
                     <div class="parameters_score--option">
                         <label>3</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="3" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-if="storeMatchArticles().length" type="radio" value="3" name="user-rating" v-model="scoreVal" @click="score(3)">
                         <input v-else type="radio" value="3" disabled>
                     </div>
                     <div class="parameters_score--option">
                         <label>4</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="4" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-if="storeMatchArticles().length" type="radio" value="4" name="user-rating" v-model="scoreVal" @click="score(4)">
                         <input v-else type="radio" value="4" disabled>
                     </div>
                     <div class="parameters_score--option">
                         <label>5</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="5" name="user-rating" v-model="scoreVal" @click="score(scoreVal)">
+                        <input v-if="storeMatchArticles().length" type="radio" value="5" name="user-rating" v-model="scoreVal" @click="score(5)">
                         <input v-else type="radio" value="5" disabled>
                     </div>
                 </form>

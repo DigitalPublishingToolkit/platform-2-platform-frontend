@@ -20,7 +20,6 @@ const state = () => ({
 
 const getters = {
     sourceBodyAsArray: (state) => {
-        // console.log(state.sourceArticle.body.split('\n'));
         return state.sourceArticle.body.split('\n')
     },
     parametersList: (state) => {
@@ -50,17 +49,16 @@ const actions = {
                 body: state.listPar.body
             }
         }).then((res) => {
-            // console.log(res);
+            // console.log()
             commit('set_matchAr', res.data)
         })
     },
     async confirm_match ({ commit, state }) {
         await axios.post('https://mhp.andrefincato.info/api/send', {
-            inputs_title: state.sourceArticle.title,
-            inputs_publisher: state.sourceArticle.publisher,
+            input_title: state.sourceArticle.title,
+            input_publisher: state.sourceArticle.publisher,
             match_title: state.matchArticles[state.matchArticleOnView].data.title,
             match_publisher: state.matchArticles[state.matchArticleOnView].data.publisher,
-            // rate: state.matchArticles[state.matchArticleOnView].data.rate,
             score: parseInt(state.matchArticles[state.matchArticleOnView].data.score),
             timestamp: new Date().toISOString()
         }).then((res) => {
@@ -102,7 +100,6 @@ const mutations = {
         })
     },
     set_ConfirmMatch (state, data) {
-        // alert("The articles " + state.sourceArticle.title.toUpperCase() + " and " + state.matchArticles[state.matchArticleOnView].data.title.toUpperCase() + " are a good match.");
         state.matchArticles[state.matchArticleOnView].isMatch = true;
         state.matchArticles[state.matchArticleOnView].onView = false;
         let confirmedMatch = state.matchArticles.splice(state.matchArticleOnView, 1);
@@ -129,11 +126,9 @@ const mutations = {
         if(data.matches.length > 0) {
             state.preMatchedArticles = data.matches;
         }
-
         if(data.author.length <= 0) {
             state.listPar.author = false;
         }
-
         if(data.tags.length <= 0) {
             state.listPar.tags = false;
         }
@@ -146,6 +141,7 @@ const mutations = {
 
         data.forEach(function(elem, i){
             elem.body = elem.body.split('\n');
+            elem.score[0] = 0;
 
             if(i < 3) {
                 let obj;
@@ -156,7 +152,7 @@ const mutations = {
                         matchIndex: state.indexNum,
                         data : data[i]
                     };
-                    // console.log(data[i]);
+                    console.log(data[i]);
                 } else {
                     obj = {
                         onView : false,
@@ -203,7 +199,7 @@ const mutations = {
         state.listPar[param] = !state.listPar[param]
     },
     scoreThis(state, score) {
-        state.matchArticles[state.matchArticleOnView].data.score = score
+        state.matchArticles[state.matchArticleOnView].data.score[0] = score;
     },
     overLapFalse(state) {
         state.findOverlapBool = false;
