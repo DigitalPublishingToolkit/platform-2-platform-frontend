@@ -54,6 +54,11 @@
     export default {
         name: "index",
         layout: "home",
+        head: {
+            meta: [
+                {charset: 'UTF-8'},
+            ]
+        },
         async fetch({store}) {
             await store.dispatch('articlesStore/get_source')
         },
