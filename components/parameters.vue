@@ -1,13 +1,15 @@
 <template>
     <div class="parameters">
-        <div class="popup-wrapper" v-if="isMatch === true" @click="isMatch = null">
+        <div class="popup-wrapper" v-if="isMatch === true" @click="closePopUp()">
             <div class="popup">
-                Article is saved as a match.
+                <p>Article is saved as a match.</p>
+                <img :src=giphySrcGood>
             </div>
         </div>
-        <div class="popup-wrapper" v-if="isMatch === false" @click="isMatch = null">
+        <div class="popup-wrapper" v-if="isMatch === false" @click="closePopUp()">
             <div class="popup">
-                Article is removed as a match.
+                <p>Article is removed as a match.</p>
+                <img :src=giphySrcBad>
             </div>
         </div>
         <div class="parameters_column parameters_column--left">
@@ -106,6 +108,7 @@
 
 <script>
     import { mapMutations } from 'vuex'
+    import axios from "axios";
 
     export default {
         name: "parameters",
@@ -128,17 +131,64 @@
                 showParameters: true,
                 isMatch: null,
                 value: 5,
-                scoreVal: ''
+                scoreVal: '',
+                giphySrcGood: '',
+                giphySrcBad: ''
             }
         },
         methods: {
             serveSetMatch() {
+                let choice = Math.ceil(Math.random() * 4);
+
+                if(choice === 1) {
+                    axios.get("https://api.giphy.com/v1/gifs/random?api_key=C4SLlhItBBSnV5vIOeVkaUNlqXAEVynb&tag=good job&rating=G").then(response => {
+                        this.giphySrcGood = response.data.data.images.downsized_large.url;
+                    });
+                } else if(choice === 2) {
+                    axios.get("https://api.giphy.com/v1/gifs/random?api_key=C4SLlhItBBSnV5vIOeVkaUNlqXAEVynb&tag=thumbs up&rating=G").then(response => {
+                        this.giphySrcGood = response.data.data.images.downsized_large.url;
+                    });
+                } else if(choice === 3) {
+                    axios.get("https://api.giphy.com/v1/gifs/random?api_key=C4SLlhItBBSnV5vIOeVkaUNlqXAEVynb&tag=clapping&rating=G").then(response => {
+                        this.giphySrcGood = response.data.data.images.downsized_large.url;
+                    });
+                } else {
+                    axios.get("https://api.giphy.com/v1/gifs/random?api_key=C4SLlhItBBSnV5vIOeVkaUNlqXAEVynb&tag=success&rating=G").then(response => {
+                        this.giphySrcGood = response.data.data.images.downsized_large.url;
+                    });
+                }
+
                 this.isMatch = true;
                 this.setMatchArticle();
             },
             unServeSetMatch() {
+                let choice = Math.ceil(Math.random() * 4);
+
+                if(choice === 1) {
+                    axios.get("https://api.giphy.com/v1/gifs/random?api_key=C4SLlhItBBSnV5vIOeVkaUNlqXAEVynb&tag=head shake&rating=G").then(response => {
+                        this.giphySrcBad = response.data.data.images.downsized_large.url;
+                    });
+                } else if(choice === 2) {
+                    axios.get("https://api.giphy.com/v1/gifs/random?api_key=C4SLlhItBBSnV5vIOeVkaUNlqXAEVynb&tag=thumbs down&rating=G").then(response => {
+                        this.giphySrcBad = response.data.data.images.downsized_large.url;
+                    });
+                } else if(choice === 3) {
+                    axios.get("https://api.giphy.com/v1/gifs/random?api_key=C4SLlhItBBSnV5vIOeVkaUNlqXAEVynb&tag=boo&rating=G").then(response => {
+                        this.giphySrcBad = response.data.data.images.downsized_large.url;
+                    });
+                } else {
+                    axios.get("https://api.giphy.com/v1/gifs/random?api_key=C4SLlhItBBSnV5vIOeVkaUNlqXAEVynb&tag=tear&rating=G").then(response => {
+                        this.giphySrcBad = response.data.data.images.downsized_large.url;
+                    });
+                }
+
                 this.isMatch = false;
                 this.unSetMatchArticle();
+            },
+            closePopUp() {
+                this.isMatch = null;
+                this.giphySrcBad = '';
+                this.giphySrcGood = '';
             },
             getMatchArticles() {
                 return this.$store.dispatch('articlesStore/get_match');
@@ -163,7 +213,7 @@
                 matchesLoaded: 'articlesStore/unSet_loadMatch'
             }),
             matchesLoadedTimeOut(){
-                setTimeout(this.matchesLoaded, 5000);
+                setTimeout(this.matchesLoaded, 2500);
             }
         },
     }
@@ -411,6 +461,8 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
     }
 
     .popup {
@@ -418,10 +470,10 @@
         padding: $spacing;
         font-size: 20px;
         line-height: 26px;
-        top: 40%;
         left: 25%;
         width: 50%;
-        height: 20%;
+        height: auto;
+        flex-direction: column;
         text-align: center;
         align-items: center;
         justify-content: center;
@@ -435,6 +487,9 @@
         position: absolute;
         margin: auto;
         background-color: white;
+        & > * {
+            display: block;
+        }
     }
 
 </style>

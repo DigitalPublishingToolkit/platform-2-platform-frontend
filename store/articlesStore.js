@@ -154,7 +154,6 @@ const mutations = {
                         matchIndex: state.indexNum,
                         data : data[i]
                     };
-                    // console.log(data[i]);
                 } else {
                     obj = {
                         onView : false,
@@ -163,6 +162,7 @@ const mutations = {
                         data : data[i]
                     };
                 }
+                // console.log(data[i]);
                 state.matchArticles.push(obj);
                 state.indexNum++;
             } else {

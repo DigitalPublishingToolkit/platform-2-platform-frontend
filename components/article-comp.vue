@@ -95,6 +95,15 @@
             </div>
         </div>
 
+        <div class="article--data article--data_match_list">
+            <div class="article--data--placeholder">
+                <p>Matching vocabulary</p>
+            </div>
+            <ul class="article--data--content article--data--content_match_list">
+                <li v-for="word in articleData.vocabulary">{{word}}</li>
+            </ul>
+        </div>
+
         <div v-if="articleData.refs.length > 0" class="article--data article--data_footnotes">
             <div class="article--data--placeholder">
                 <p>Footnotes</p>

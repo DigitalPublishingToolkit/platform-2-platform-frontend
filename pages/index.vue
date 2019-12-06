@@ -1,6 +1,6 @@
 <template>
     <div class="main_articles">
-        <div id="left-column" class="main_articles_column main_articles_column--left" v-on:scroll="scrollBarNow(); handleScroll($event);">
+        <div id="left-column" class="main_articles_column main_articles_column--left" v-on:scroll="scrollBarNow(); handleScroll($event); showTitlePlaceholder($event);">
             <div class="articles_column--left--scrollbar article--scrollbar" :class="{together: scrollLock}">
                 <div class="article--scrollbar_thumb articles_column--left--scrollbar_thumb" @click="lockedScroll()"></div>
             </div>
@@ -8,6 +8,7 @@
             <div v-if="storePreMatchedArticles().length" class="article--placeholder match-tabs">
                 <div class="tab tab_source" @click="showSourceNow()" :class="{active: showSource}">
                     <p>Source article</p>
+                    <p class="title">{{storeSourceArticle.title}}</p>
                 </div>
                 <div v-for="(match, index) in storePreMatchedArticles()" class="tab" v-bind:data="index" @click="showPreMatch(index)" :class="{active : showMatchedArticle(index)}">
                     <p>Match {{index + 1}}</p>
@@ -15,6 +16,7 @@
             </div>
             <div v-else class="article--placeholder">
                 <p>Source article</p>
+                <p class="title">Source article: {{storeSourceArticle.title}}</p>
             </div>
 
             <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source" :class="{active: showSource}"></articleComp>
@@ -29,6 +31,7 @@
             <div v-if="storeMatchArticles().length" class="article--placeholder match-tabs">
                 <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index), yesMatch : match.isMatch}" v-bind:data="index" @click="updateView(index); highlightTagsTitle();">
                     <p>Match suggestion {{match.matchIndex}}</p>
+                    <p>{{match.data.title}}</p>
                 </div>
             </div>
             <articleComp v-if="storeMatchArticles().length" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" :isMatch="match.isMatch" class="article--match article--match--1" v-bind:class="{active : match.onView, yesMatch : match.isMatch}"></articleComp>
@@ -98,6 +101,42 @@
                 lockedScroll: 'articlesStore/changeLockedScroll',
                 toggleOverLap: 'articlesStore/overLapFalse'
             }),
+            showTitlePlaceholder(e) {
+                const titleField = document.querySelector('#' + e.currentTarget.id + ' .article--data_title');
+
+                // if(e.currentTarget.id === 'right-column') {
+                //     const sourcePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder .tab.active > p');
+                //     const titlePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder .tab.active > p:nth-of-type(2)');
+                //
+                //     if(titleField.getBoundingClientRect().height + titleField.getBoundingClientRect().top <= 34) {
+                //         sourcePlaceholder.style.opacity = '0';
+                //         sourcePlaceholder.style.display = 'none';
+                //         titlePlaceholder.style.opacity = '1';
+                //         titlePlaceholder.style.display = 'inline-block';
+                //     } else if(titleField.getBoundingClientRect().height + titleField.getBoundingClientRect().top <= 34) {
+                //         titlePlaceholder.style.opacity = '0';
+                //         titlePlaceholder.style.display = 'none';
+                //         sourcePlaceholder.style.opacity = '1';
+                //         sourcePlaceholder.style.display = 'inline-block';
+                //     }
+                // } else {
+                    // console.log("hi?");
+                    const sourcePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder > p');
+                    const titlePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder > p:nth-of-type(2)');
+
+                    if(titleField.getBoundingClientRect().height + titleField.getBoundingClientRect().top <= 34) {
+                        sourcePlaceholder.style.opacity = '0';
+                        sourcePlaceholder.style.display = 'none';
+                        titlePlaceholder.style.opacity = '1';
+                        titlePlaceholder.style.display = 'inline-block';
+                    } else {
+                        titlePlaceholder.style.opacity = '0';
+                        titlePlaceholder.style.display = 'none';
+                        sourcePlaceholder.style.opacity = '1';
+                        sourcePlaceholder.style.display = 'inline-block';
+                    }
+                // }
+            },
             showSourceNow() {
                 this.showSource = true;
             },
@@ -254,6 +293,7 @@
 
                         for(let i = 0; i < this.storeMatchArticles().length; i++) {
                             let article = this.storeMatchArticles()[i].data;
+                            console.table(article.vocabulary);
 
                             let activeMatchArticleBody = matchArticles[i].querySelector(".article--data--content.article--data--content_body");
                             let activeMatchArticleTitle = matchArticles[i].querySelector(".article--data--content.article--data--content_title");
@@ -294,25 +334,25 @@
                             }
 
                             // finding vocabulary
-                            for(let vocabi = 0; vocabi < article.vocabulary.length; vocabi++) {
-                                let substring = ' ' + article.vocabulary[vocabi] + ' ';
-
-                                this.findPlainText(sourceArticleBody, substring, function(node, index) {
-                                    node.splitText(index + substring.length);
-                                    const spanHighlight = document.createElement('span');
-                                    spanHighlight.setAttribute('matchIndex', i);
-                                    spanHighlight.appendChild(node.splitText(index));
-                                    node.parentNode.insertBefore(spanHighlight, node.nextSibling);
-                                });
-
-                                this.findPlainText(activeMatchArticleBody, substring, function(node, index) {
-                                    node.splitText(index + substring.length);
-                                    const spanHighlight = document.createElement('span');
-                                    spanHighlight.setAttribute('matchIndex', i);
-                                    spanHighlight.appendChild(node.splitText(index));
-                                    node.parentNode.insertBefore(spanHighlight, node.nextSibling);
-                                });
-                            }
+                            // for(let vocabi = 0; vocabi < article.vocabulary.length; vocabi++) {
+                            //     let substring = ' ' + article.vocabulary[vocabi] + ' ';
+                            //
+                            //     this.findPlainText(sourceArticleBody, substring, function(node, index) {
+                            //         node.splitText(index + substring.length);
+                            //         const spanHighlight = document.createElement('span');
+                            //         spanHighlight.setAttribute('matchIndex', i);
+                            //         spanHighlight.appendChild(node.splitText(index));
+                            //         node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                            //     });
+                            //
+                            //     this.findPlainText(activeMatchArticleBody, substring, function(node, index) {
+                            //         node.splitText(index + substring.length);
+                            //         const spanHighlight = document.createElement('span');
+                            //         spanHighlight.setAttribute('matchIndex', i);
+                            //         spanHighlight.appendChild(node.splitText(index));
+                            //         node.parentNode.insertBefore(spanHighlight, node.nextSibling);
+                            //     });
+                            // }
 
                             if(i > 0) {
                                 findOverlap = true;
@@ -438,6 +478,16 @@
                     border-bottom: none;
                     color: $black;
                     cursor: default !important;
+                    & p {
+                        display: inline-block;
+                        &:nth-of-type(2) {
+                            /*position: absolute;*/
+                            /*left: inherit;*/
+                            display: none;
+                            opacity: 0;
+                            transition: opacity 0.2s linear;
+                        }
+                    }
                 }
                 &:hover {
                     cursor: pointer;
@@ -447,6 +497,16 @@
         & p {
             display: inline-block;
             float: left;
+            opacity: 1;
+            transition: opacity 0.2s linear;
+
+            &:nth-of-type(2) {
+                /*<!--position: absolute;-->*/
+                /*<!--left: $spacing/2;-->*/
+                display: none;
+                opacity: 0;
+                transition: opacity 0.2s linear;
+            }
         }
         & .lockScroll {
             float: right;
