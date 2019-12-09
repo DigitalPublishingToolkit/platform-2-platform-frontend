@@ -103,39 +103,20 @@
             }),
             showTitlePlaceholder(e) {
                 const titleField = document.querySelector('#' + e.currentTarget.id + ' .article--data_title');
+                const sourcePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder > p');
+                const titlePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder > p:nth-of-type(2)');
 
-                // if(e.currentTarget.id === 'right-column') {
-                //     const sourcePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder .tab.active > p');
-                //     const titlePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder .tab.active > p:nth-of-type(2)');
-                //
-                //     if(titleField.getBoundingClientRect().height + titleField.getBoundingClientRect().top <= 34) {
-                //         sourcePlaceholder.style.opacity = '0';
-                //         sourcePlaceholder.style.display = 'none';
-                //         titlePlaceholder.style.opacity = '1';
-                //         titlePlaceholder.style.display = 'inline-block';
-                //     } else if(titleField.getBoundingClientRect().height + titleField.getBoundingClientRect().top <= 34) {
-                //         titlePlaceholder.style.opacity = '0';
-                //         titlePlaceholder.style.display = 'none';
-                //         sourcePlaceholder.style.opacity = '1';
-                //         sourcePlaceholder.style.display = 'inline-block';
-                //     }
-                // } else {
-                    // console.log("hi?");
-                    const sourcePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder > p');
-                    const titlePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder > p:nth-of-type(2)');
-
-                    if(titleField.getBoundingClientRect().height + titleField.getBoundingClientRect().top <= 34) {
-                        sourcePlaceholder.style.opacity = '0';
-                        sourcePlaceholder.style.display = 'none';
-                        titlePlaceholder.style.opacity = '1';
-                        titlePlaceholder.style.display = 'inline-block';
-                    } else {
-                        titlePlaceholder.style.opacity = '0';
-                        titlePlaceholder.style.display = 'none';
-                        sourcePlaceholder.style.opacity = '1';
-                        sourcePlaceholder.style.display = 'inline-block';
-                    }
-                // }
+                if(titleField.getBoundingClientRect().height + titleField.getBoundingClientRect().top <= 34) {
+                    sourcePlaceholder.style.opacity = '0';
+                    sourcePlaceholder.style.display = 'none';
+                    titlePlaceholder.style.opacity = '1';
+                    titlePlaceholder.style.display = 'inline-block';
+                } else {
+                    titlePlaceholder.style.opacity = '0';
+                    titlePlaceholder.style.display = 'none';
+                    sourcePlaceholder.style.opacity = '1';
+                    sourcePlaceholder.style.display = 'inline-block';
+                }
             },
             showSourceNow() {
                 this.showSource = true;
@@ -163,16 +144,14 @@
                 return this.$store.state.articlesStore.preMatchedArticles
             },
             highlightTagsTitle() {
-                // console.log("hi");
-
                 let allSimilar = document.querySelectorAll('.similar');
+
                 allSimilar.forEach(function(similarNode, ind) {
                     similarNode.classList.remove('similar');
                 });
 
                 const sourceArticle = document.querySelector("#left-column .article--source");
                 const sourceTags = sourceArticle.querySelectorAll('.article--data--content_tags_tag');
-
                 const activeMatchArticle = document.querySelector(".article--match.active");
                 const activeMatchTags = activeMatchArticle.querySelectorAll('.article--data--content_tags_tag');
 
@@ -190,8 +169,6 @@
                 for(let spanInd = 0; spanInd < allCurrentSpans.length; spanInd++) {
                     if(allCurrentSpans[spanInd].getAttribute('matchindex') === (''+this.matchArticleOnView+'')) {
                         allCurrentSpans[spanInd].classList.add('highlight');
-                    } else {
-                        // allCurrentSpans[spanInd].classList.remove('highlight');
                     }
                 }
             },
@@ -320,7 +297,6 @@
                             }
                             if(activeMatchArticleTitleArrNew.length > 1) {
                                 for(let matchTitleInd = 0; matchTitleInd < activeMatchArticleTitleArrNew.length; matchTitleInd++) {
-                                    // console.log(activeMatchArticleTitleArrNew[sourceTitleInd]);
                                     let substring = activeMatchArticleTitleArrNew[matchTitleInd];
 
                                     this.findPlainText(sourceArticleTitle, substring, function(node, index) {
@@ -332,27 +308,6 @@
                                     });
                                 }
                             }
-
-                            // finding vocabulary
-                            // for(let vocabi = 0; vocabi < article.vocabulary.length; vocabi++) {
-                            //     let substring = ' ' + article.vocabulary[vocabi] + ' ';
-                            //
-                            //     this.findPlainText(sourceArticleBody, substring, function(node, index) {
-                            //         node.splitText(index + substring.length);
-                            //         const spanHighlight = document.createElement('span');
-                            //         spanHighlight.setAttribute('matchIndex', i);
-                            //         spanHighlight.appendChild(node.splitText(index));
-                            //         node.parentNode.insertBefore(spanHighlight, node.nextSibling);
-                            //     });
-                            //
-                            //     this.findPlainText(activeMatchArticleBody, substring, function(node, index) {
-                            //         node.splitText(index + substring.length);
-                            //         const spanHighlight = document.createElement('span');
-                            //         spanHighlight.setAttribute('matchIndex', i);
-                            //         spanHighlight.appendChild(node.splitText(index));
-                            //         node.parentNode.insertBefore(spanHighlight, node.nextSibling);
-                            //     });
-                            // }
 
                             if(i > 0) {
                                 findOverlap = true;
