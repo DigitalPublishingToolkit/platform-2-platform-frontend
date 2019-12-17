@@ -37,6 +37,24 @@ const actions = {
             commit('set_sourceAr', res.data)
         })
     },
+    async get_source_open ({ commit }) {
+        await axios.get('https://mhp.andrefincato.info/api/articles/online-open').then((res) => {
+            const randomNumber = Math.ceil(Math.random() * res.data.length);
+            commit('set_sourceAr', res.data[randomNumber])
+        })
+    },
+    async get_source_openset ({ commit }) {
+        await axios.get('https://mhp.andrefincato.info/api/articles/open-set-reader').then((res) => {
+            const randomNumber = Math.ceil(Math.random() * res.data.length);
+            commit('set_sourceAr', res.data[randomNumber])
+        })
+    },
+    async get_source_amateurcities ({ commit }) {
+        await axios.get('https://mhp.andrefincato.info/api/articles/amateur-cities').then((res) => {
+            const randomNumber = Math.ceil(Math.random() * res.data.length);
+            commit('set_sourceAr', res.data[randomNumber])
+        })
+    },
     async get_match ({ commit, state }) {
         await axios.post('https://mhp.andrefincato.info/api/ask', {
             article_title: state.sourceArticle.title,
