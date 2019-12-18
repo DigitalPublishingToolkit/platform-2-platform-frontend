@@ -41,8 +41,6 @@
                 </form>
                 <div v-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (!storeMatchArticles().length)" class="parameters_button parameters_form--submit" @click="getMatchArticles(); loadingMatches(); matchesLoadedTimeOut();">Get Matches</div>
                 <div v-else class="parameters_button parameters_form--submit--noparams">Get Matches</div>
-<!--                <div v-else-if="(paramList.title || paramList.author || paramList.tags || paramList.body) && (storeMatchArticles().length)" class="parameters_button parameters_form&#45;&#45;submit" @click="getMatchArticles()">Get new pool ↺</div>-->
-<!--                <div v-else class="parameters_button parameters_form&#45;&#45;submit&#45;&#45;noparams">Get new pool ↺</div>-->
             </div>
         </div>
 
@@ -58,47 +56,37 @@
 
             <div class="parameters_column--field field-user-score">
                 <p class="placeholder">Your rating</p>
-                <form>
-                    <div class="parameters_score--option">
-                        <label>1</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="1" name="user-rating" v-model="scoreVal" @click="score(1)">
-                        <input v-else type="radio" value="1" disabled>
+                <div class="field-user-score-content" v-if="storeMatchArticles().length">
+                    <div class="parameters_score--option" v-bind:class="{selected : 1 === scoreVal}" @click="score(1); updateScoreVal(1);">
+                        1
                     </div>
-                    <div class="parameters_score--option">
-                        <label>2</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="2" name="user-rating" v-model="scoreVal" @click="score(2)">
-                        <input v-else type="radio" value="2" disabled>
+                    <div class="parameters_score--option" v-bind:class="{selected : 2 === scoreVal}" @click="score(2); updateScoreVal(2);">
+                        2
                     </div>
-                    <div class="parameters_score--option">
-                        <label>3</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="3" name="user-rating" v-model="scoreVal" @click="score(3)">
-                        <input v-else type="radio" value="3" disabled>
+                    <div class="parameters_score--option" v-bind:class="{selected : 3 === scoreVal}" @click="score(3); updateScoreVal(3);">
+                        3
                     </div>
-                    <div class="parameters_score--option">
-                        <label>4</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="4" name="user-rating" v-model="scoreVal" @click="score(4)">
-                        <input v-else type="radio" value="4" disabled>
+                    <div class="parameters_score--option" v-bind:class="{selected : 4 === scoreVal}" @click="score(4); updateScoreVal(4);">
+                        4
                     </div>
-                    <div class="parameters_score--option">
-                        <label>5</label>
-                        <input v-if="storeMatchArticles().length" type="radio" value="5" name="user-rating" v-model="scoreVal" @click="score(5)">
-                        <input v-else type="radio" value="5" disabled>
+                    <div class="parameters_score--option" v-bind:class="{selected : 5 === scoreVal}" @click="score(5); updateScoreVal(5);">
+                        5
                     </div>
-                </form>
+                </div>
             </div>
 
             <div class="parameters_column--field field-matchmaking">
                 <p class="placeholder">Match or no match</p>
                 <!--                    !storeMatchArticles()[matchArticleOnView].isMatch-->
                 <div v-if="storeMatchArticles().length">
-                    <div class="parameters_button parameters_matchmaking--yes" @click="serveSetMatch()">Yes, it is</div>
+                    <div class="parameters_button parameters_matchmaking--yes" @click="serveSetMatch()">Yes</div>
                     <span class="divider-slash">/</span>
-                    <div class="parameters_button parameters_matchmaking--no" @click="unServeSetMatch()">No, it's not</div>
+                    <div class="parameters_button parameters_matchmaking--no" @click="unServeSetMatch()">No</div>
                 </div>
                 <div v-else>
-                    <div class="parameters_button parameters_matchmaking--yes--inactive">Yes, it is</div>
+                    <div class="parameters_button parameters_matchmaking--yes--inactive">Yes</div>
                     <span class="divider-slash">/</span>
-                    <div class="parameters_button parameters_matchmaking--no--inactive">No, it's not</div>
+                    <div class="parameters_button parameters_matchmaking--no--inactive">No</div>
                 </div>
             </div>
         </div>
@@ -130,7 +118,6 @@
             return {
                 showParameters: true,
                 isMatch: null,
-                value: 5,
                 scoreVal: '',
                 giphySrcGood: '',
                 giphySrcBad: ''
@@ -157,7 +144,7 @@
                         this.giphySrcGood = response.data.data.images.downsized_large.url;
                     });
                 }
-
+                this.scoreVal = '';
                 this.isMatch = true;
                 this.setMatchArticle();
             },
@@ -182,6 +169,7 @@
                     });
                 }
 
+                this.scoreVal = '';
                 this.isMatch = false;
                 this.unSetMatchArticle();
             },
@@ -214,6 +202,9 @@
             }),
             matchesLoadedTimeOut(){
                 setTimeout(this.matchesLoaded, 2500);
+            },
+            updateScoreVal(val) {
+                this.scoreVal = val;
             }
         },
     }
@@ -236,16 +227,27 @@
         background-color: $white;
         border-top: 1px solid $charcoal;
         z-index: 99999;
-        &_score--option {
+        @media (max-width: 1200px) {
+            height: 160px;
+        }
+            &_score--option {
             padding: 0;
-            display: inline-block;
-            margin: 0 $spacing*0.75 0 0;
-            border-radius: 0;
+            display: block;
+            float: left;
+            margin: 0 $spacing*0.25 $spacing*0.25 0;
+            border-radius: 2px;
             font-size: 20px;
-            line-height: 46px;
-            /*border-bottom: 2px solid rgba(49, 49, 49, 1);*/
-            &:first-of-type {
-                margin: 0 $spacing*0.75 0 $spacing*1.5;
+            line-height: 44px;
+            width: 1.3em;
+            text-align: center;
+            border: 1px solid $charcoal;
+            &:hover {
+                cursor: pointer;
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+            &.selected {
+                color: $white;
+                background-color: $red;
             }
         }
 
@@ -253,19 +255,12 @@
             width: 50%;
             display: flex;
             align-items: stretch;
-            /*background-color: rgba(0, 0, 0, 0.05);*/
+            height: 100%;
 
             &--left {
                 box-sizing: content-box;
                 border-right: 1px solid rgba(0, 0, 0, 1);
                 float: left;
-
-                & .parameters_column--field {
-                    &.field-checkboxes {
-                        /*flex-grow: 2;*/
-                        /*border-right: 1px solid rgba(0, 0, 0, 0.1);*/
-                    }
-                }
             }
 
             &--right {
@@ -281,8 +276,6 @@
                     }
 
                     & .score_rating {
-                        /*font-weight: 300;*/
-
                         & span {
                             font-size: $font-size-l;
                             line-height: 46px;
@@ -292,6 +285,10 @@
                             border-radius: 2px;
                         }
                     }
+
+                    & .field-user-score-content {
+                        margin: 0 0 0 $spacing*1.5;
+                    }
                 }
             }
         }
@@ -299,28 +296,29 @@
         & .placeholder {
             font-size: $font-size-s;
             color: rgba(0, 0, 0, 0.4);
-            padding: $spacing $spacing/2 $spacing/2 $spacing/2;
+            margin: $spacing/2 $spacing/3 0 $spacing/3;
+            padding: $spacing/2;
         }
         &_form {
             display: inline-block;
             float: left;
-            padding: 0 0 $spacing $spacing*1.5;
+            padding: 0 0 $spacing/3 $spacing*1.5;
             &--option {
-                /*font-weight: 300;*/
                 float: left;
                 display: inline-block;
                 color: $black;
                 margin: 0 $spacing*1.5 0 0;
                 padding: 0;
-                /*background-color: rgba(255, 255, 255, 0.2);*/
                 border-radius: 0;
                 font-size: 20px;
                 line-height: 46px;
                 border-bottom: 2px solid rgba(49, 49, 49, 1);
+                &:last-of-type {
+                    margin: 0;
+                }
                 &.active {
                     border-bottom: 2px solid $red;
                     color: $red;
-                    /*box-shadow: 0px 0px 0px 4px rgba(255, 255, 255, 0.4);*/
                 }
                 &:hover {
                     cursor: pointer;
@@ -360,7 +358,6 @@
         font-family: $font-stack-sans;
         font-size: 20px;
         line-height: 46px;
-        /*font-weight: 300;*/
         background-color: transparent;
         outline: none;
         border-top: none;
@@ -369,7 +366,7 @@
         border-right: none;
         border-radius: 0;
         display: inline-block;
-        margin: 0 0 $spacing $spacing*1.5;
+        margin: 0 $spacing*1.5 $spacing $spacing*1.5;
         border-bottom: 2px solid rgba(49, 49, 49, 1);
         &:hover {
             cursor: pointer;
@@ -378,11 +375,15 @@
         &.parameters_matchmaking--no {
             margin-left: 0;
         }
+        &.parameters_matchmaking--yes {
+            margin-right: 0;
+        }
     }
 
     .parameters_matchmaking--yes--inactive {
         color: rgba(0, 0, 0, 0.2);
         border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+        margin-right: 0;
         &:hover {
             background-color: transparent;
             cursor: default;
@@ -422,7 +423,7 @@
 
     .divider-slash {
         width: 9px;
-        margin: 0 18px;
+        margin: 0 $spacing/2;
     }
 
     .active {
@@ -432,26 +433,6 @@
 
     .score_rating--noarticle {
         color: rgba(0, 0, 0, 0.2);
-    }
-
-    .parameters_matchmaking--matchconfirm {
-        font-family: $font-stack-sans;
-        font-size: 20px;
-        line-height: 46px;
-        font-weight: 300;
-        background-color: transparent;
-        outline: none;
-        border-top: none;
-        border-bottom: none;
-        border-left: none;
-        border-right: none;
-        border-radius: 0;
-        display: inline-block;
-        margin: 0 0 $spacing $spacing*1.5;
-        border-bottom: 2px solid rgba(49, 49, 49, 1);
-
-        color: rgba(0, 0, 0, 0.2);
-        border-bottom: 2px solid rgba(0, 0, 0, 0.2);
     }
 
     .popup-wrapper {
@@ -478,12 +459,7 @@
         align-items: center;
         justify-content: center;
         align-content: center;
-        /*line-height: 100%;*/
         border: 1px solid rgba(49, 49, 49, 1);
-        /*left: 1px;*/
-        /*top: 1px;*/
-        /*bottom: 1px;*/
-        /*right: 1px;*/
         position: absolute;
         margin: auto;
         background-color: white;

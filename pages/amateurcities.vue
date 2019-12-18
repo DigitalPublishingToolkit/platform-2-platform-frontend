@@ -7,15 +7,15 @@
 
             <div v-if="storePreMatchedArticles().length" class="article--placeholder match-tabs">
                 <div class="tab tab_source" @click="showSourceNow()" :class="{active: showSource}">
-                    <p>Source article</p>
-                    <p class="title">{{storeSourceArticle.title}}</p>
+                    <p class="source">Source article</p>
+                    <p class="title">Source article: {{storeSourceArticle.title}}</p>
                 </div>
                 <div v-for="(match, index) in storePreMatchedArticles()" class="tab" v-bind:data="index" @click="showPreMatch(index)" :class="{active : showMatchedArticle(index)}">
                     <p>Match {{index + 1}}</p>
                 </div>
             </div>
             <div v-else class="article--placeholder">
-                <p>Source article</p>
+                <p class="source">Source article</p>
                 <p class="title">Source article: {{storeSourceArticle.title}}</p>
             </div>
 
@@ -102,9 +102,9 @@
                 toggleOverLap: 'articlesStore/overLapFalse'
             }),
             showTitlePlaceholder(e) {
-                const titleField = document.querySelector('#' + e.currentTarget.id + ' .article--data_title');
-                const sourcePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder > p');
-                const titlePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder > p:nth-of-type(2)');
+                const titleField = document.querySelector('#left-column .article--data_title');
+                const sourcePlaceholder = document.querySelector('#left-column .article--placeholder p.source');
+                const titlePlaceholder = document.querySelector('#left-column .article--placeholder p.title');
 
                 if(titleField.getBoundingClientRect().height + titleField.getBoundingClientRect().top <= 34) {
                     sourcePlaceholder.style.opacity = '0';
@@ -345,6 +345,9 @@
         left: 0;
         right: 0;
         bottom: $parameter-size;
+        @media (max-width: 1200px) {
+            bottom: 160px;
+        }
         background-color: rgba(255, 255, 255, 1);
 
         &_column {

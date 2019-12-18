@@ -64,7 +64,8 @@
                 }
             }
             & img.fullscreen {
-                height: 60vh;
+                height: auto;
+                max-height: 60vh;
                 width: auto;
                 max-width: 80vw;
             }

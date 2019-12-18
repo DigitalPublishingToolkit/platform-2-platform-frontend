@@ -23,20 +23,29 @@
     @import "../assets/style/variables.scss";
 
     .index {
+        top: 3px;
+        bottom: 0;
         width: 100%;
-        height: 100%;
         position: absolute;
         display: flex;
         align-items: center;
+        overflow: hidden;
 
         &_option {
-            color: white;
+            font-family: $font-stack-serif;
+            color: $charcoal;
             text-decoration: none;
-            flex-grow: 1;
+            flex: 1;
             text-align: center;
+            height: 100vh;
+            line-height: 100vh;
+            font-size: 2em;
+            background-color: $white;
+            border: 1px solid $charcoal;
+            box-sizing: border-box;
 
             &:visited {
-                color: white;
+                color: $charcoal;
             }
 
             &:hover {
