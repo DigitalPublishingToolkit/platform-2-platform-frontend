@@ -5,7 +5,7 @@
                 <p>Publisher</p>
             </div>
             <div class="article--data--content article--data--content_publisher">
-                {{articleData.publisher}}, {{getMonthFromString(articleData.mod)}}, <a class="linkToOrigin" v-bind:href="articleData.url" target="_blank">source ↗</a>
+                {{articleData.match_publisher}}
             </div>
         </div>
 
@@ -15,96 +15,7 @@
                 <p>Title</p>
             </div>
             <div class="article--data--content article--data--content_title">
-                {{articleData.title}}
-            </div>
-        </div>
-
-        <div class="article--data article--data_author" v-bind:class="{requireY : paramList.author}">
-            <div class="article--data--placeholder">
-                <p v-if="articleData.author.length > 1">Authors</p>
-                <p v-else>Author</p>
-            </div>
-            <div v-if="articleData.author.length > 0" class="article--data--content article--data--content_authors">
-                <span class="article--data--content_authors_author" v-for="author in articleData.author">{{author}}</span>
-            </div>
-            <div v-else class="article--data--content article--data--content_none">
-                Couldn't find author to scrape…
-            </div>
-        </div>
-
-        <div class="article--data article--data_tags" v-bind:class="{requireY : paramList.tags}">
-            <div class="article--data--placeholder">
-                <p>Tags</p>
-            </div>
-            <div v-if="articleData.tags.length > 0" class="article--data--content article--data--content_tags">
-                <span class="article--data--content_tags_tag" v-for="tag in articleData.tags">{{tag}}</span>
-            </div>
-            <div v-else class="article--data--content article--data--content_none">
-                None found to scrape…
-            </div>
-        </div>
-
-        <div class="article--data article--data_abstract">
-            <div class="article--data--placeholder">
-                <p>Abstract</p>
-            </div>
-            <div v-if="(articleData.abstract.split('').length > 0) && !(articleData.abstract === 'empty')" class="article--data--content article--data--content_abstract">
-                {{articleData.abstract}}
-            </div>
-            <div v-else class="article--data--content article--data--content_none">
-                No abstract found to scrape…
-            </div>
-        </div>
-
-        <div class="article--data article--data_body" v-bind:class="{requireY : paramList.body}">
-            <div class="article--data--placeholder">
-                <p>Body</p>
-            </div>
-            <div v-if="articleType === 'source'" class="article--data--content article--data--content_body">
-                <p class="article--data--content_body_paragraph" v-for="item in sourceBodyTextArray()">
-                    {{item}}
-                </p>
-            </div>
-            <div v-else class="article--data--content article--data--content_body">
-                <p class="article--data--content_body_paragraph" v-for="item in articleData.body">
-                    {{item}}
-                </p>
-            </div>
-        </div>
-
-        <div v-if="articleType != 'source'" class="article--data article--data_match_list">
-            <div class="article--data--placeholder">
-                <p>Matching vocabulary</p>
-            </div>
-            <div class="article--data--content article--data--content_match_list">
-                <span class="article--data--content_match_list_word" v-for="word in articleData.vocabulary">{{word}}</span>
-            </div>
-        </div>
-
-        <div v-if="articleData.refs.length > 0" class="article--data article--data_footnotes">
-            <div class="article--data--placeholder">
-                <p>Footnotes</p>
-            </div>
-            <ol class="article--data--content article--data--content_footnotes">
-                <li class="article--data--content_footnotes_footnote" v-for="footnote in articleData.refs">{{footnote.split(/\d\. /g)[1]}}</li>
-            </ol>
-        </div>
-
-        <div v-if="articleData.links.length > 0" class="article--data article--data_references">
-            <div class="article--data--placeholder">
-                <p>References</p>
-            </div>
-            <ul class="article--data--content article--data--content_references">
-                <li class="article--data--content_references_reference" v-for="reference in articleData.links"><a :href="reference">{{reference.split("://")[1]}}</a></li>
-            </ul>
-        </div>
-
-        <div v-if="articleData.images.length > 0" class="article--data article--data_images">
-            <div class="article--data--placeholder">
-                <p>Images</p>
-            </div>
-            <div class="article--data--content article--data--content_images">
-                <img @click="showImageFullscreen($event)" class="article--data--content_images_image" v-for="image in articleData.images" :src="'https://mhp.andrefincato.info/' + image">
+                {{articleData.match_title}}
             </div>
         </div>
     </div>
@@ -114,7 +25,7 @@
     import { mapGetters } from 'vuex'
 
     export default {
-        name: "article-comp",
+        name: "article-comp-prematch",
         props: [
             "articleType",
             "articleInd",
@@ -259,9 +170,9 @@
                         }
                     }
                 }
-                &_tags, &_match_list {
+                &_tags {
                     margin-bottom: $spacing*1.5-6;
-                    &_tag, &_word {
+                    &_tag {
                         background-color: rgba(0, 0, 0, 0.1);
                         padding: 3px 5px;
                         margin-right: 8px;

@@ -15,7 +15,8 @@ const state = () => ({
     },
     loadingMatches: false,
     findOverlapBool: true,
-    indexNum: 1
+    indexNum: 1,
+    progress: []
 })
 
 const getters = {
@@ -31,6 +32,11 @@ const getters = {
 }
 
 const actions = {
+    async get_process ({ commit }) {
+        await axios.get('https://mhp.andrefincato.info/api/articles/progress').then((res) => {
+            commit('set_progressAr', res.data)
+        })
+    },
     async get_source ({ commit }) {
         await axios.get('https://mhp.andrefincato.info/api/article/random').then((res) => {
             // console.log(res.data);
@@ -52,6 +58,7 @@ const actions = {
     async get_source_amateurcities ({ commit }) {
         await axios.get('https://mhp.andrefincato.info/api/articles/amateur-cities').then((res) => {
             const randomNumber = Math.ceil(Math.random() * res.data.length);
+            // console.log(res.data[randomNumber].matches, randomNumber, res.data.length);
             commit('set_sourceAr', res.data[randomNumber])
         })
     },
@@ -214,6 +221,9 @@ const mutations = {
                 state.matchArticles.push(newMatches[i]);
             });
         }
+    },
+    set_progressAr(state, data) {
+        state.progress = data;
     },
     toggleThis(state, param) {
         state.listPar[param] = !state.listPar[param]

@@ -20,7 +20,7 @@
             </div>
 
             <articleComp articleType="source" articleInd="0" :articleData="storeSourceArticle" class="article--source" :class="{active: showSource}"></articleComp>
-            <articleComp v-if="storePreMatchedArticles().length" v-for="(match, index) in storePreMatchedArticles()" articleType="matched" :key="index" :articleInd="index" :articleData="match.data" class="article--matched" v-bind:class="{active : showMatchedArticle(index)}"></articleComp>
+            <articleCompPreMatch v-if="storePreMatchedArticles().length" v-for="(match, index) in storePreMatchedArticles()" articleType="matched" :key="index" :articleInd="index" :articleData="match" class="article--matched" v-bind:class="{active : showMatchedArticle(index)}"></articleCompPreMatch>
 
         </div>
         <div id="right-column" class="main_articles_column main_articles_column--right" v-on:scroll="scrollBarNow(); handleScroll($event);" v-bind:class="{noArticle : (storeMatchArticles().length === 0)}">
@@ -53,6 +53,7 @@
     import {mapGetters} from 'vuex'
     import articleComp from "~/components/article-comp"
     import parameters from "~/components/parameters"
+    import articleCompPreMatch from "~/components/article-comp-prematch"
 
     export default {
         name: "open",
@@ -89,7 +90,8 @@
         },
         components: {
             articleComp,
-            parameters
+            parameters,
+            articleCompPreMatch
         },
         methods: {
             ...mapGetters({
