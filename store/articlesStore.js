@@ -97,10 +97,19 @@ const actions = {
         commit('set_denyMatch');
         commit('setOnview', state.matchArticleOnView);
         commit('check_MatchValue');
+    },
+    nullMatches({ commit, state }) {
+        commit('set_nullMatches');
     }
 }
 
 const mutations = {
+    set_nullMatches(state) {
+        state.matchArticleOnView = '';
+        state.matchPool = [];
+        state.matchArticles = [];
+        state.indexNum = 1;
+    },
     set_loadMatch(state) {
         // console.log(state.loadingMatches);
         state.loadingMatches = true;

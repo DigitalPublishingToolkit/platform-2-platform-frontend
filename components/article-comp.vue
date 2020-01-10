@@ -5,7 +5,7 @@
                 <p>Publisher</p>
             </div>
             <div class="article--data--content article--data--content_publisher">
-                {{articleData.publisher}}, {{getMonthFromString(articleData.mod)}}, <a class="linkToOrigin" v-bind:href="articleData.url" target="_blank">source ↗</a>
+                <strong>{{articleData.publisher}}</strong>, {{getMonthFromString(articleData.mod)}}, <a class="linkToOrigin" v-bind:href="articleData.url" target="_blank">source ↗</a>
             </div>
         </div>
 

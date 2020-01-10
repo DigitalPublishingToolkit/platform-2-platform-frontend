@@ -30,8 +30,8 @@
 
             <div v-if="storeMatchArticles().length" class="article--placeholder match-tabs">
                 <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index), yesMatch : match.isMatch}" v-bind:data="index" @click="updateView(index); highlightTagsTitle();">
-                    <p>Match suggestion {{match.matchIndex}}</p>
-                    <p>{{match.data.title}}</p>
+                    <div><p>Match suggestion {{match.matchIndex}}: {{match.data.title}}</p></div><div class="gradient"></div>
+                    <!--                    <p></p>-->
                 </div>
             </div>
             <articleComp v-if="storeMatchArticles().length" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" :isMatch="match.isMatch" class="article--match article--match--1" v-bind:class="{active : match.onView, yesMatch : match.isMatch}"></articleComp>
@@ -433,12 +433,30 @@
             margin: 0;
             z-index: 99;
             & .tab {
+                position: relative;
                 padding: $spacing/2 ($spacing/2 + 6);
                 flex-grow: 1;
                 background-color: $charcoal;
                 color: $white;
                 border-right: 1px solid rgba(255, 255, 255, 0.2);
                 border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                /*display: flex;*/
+                overflow:hidden;
+                & div {
+                    overflow:hidden;
+                }
+                & .gradient {
+                    position: absolute;
+                    right: $spacing/2;
+                    top: 0;
+                    width: 12.5%;
+                    height: 100%;
+                    background: linear-gradient(90deg, rgba($charcoal,0) 0%, rgba($charcoal,1) 100%);
+                }
+                & p {
+                    display: block;
+                    width: 100vw;
+                }
                 &_source {
                     flex-grow: 3;
                 }
@@ -459,6 +477,14 @@
                             opacity: 0;
                             transition: opacity 0.2s linear;
                         }
+                    }
+                    & .gradient {
+                        position: absolute;
+                        right: $spacing/2;
+                        top: 0;
+                        width: 12.5%;
+                        height: 100%;
+                        background: linear-gradient(90deg, rgba($white,0) 0%, rgba($white,1) 100%);
                     }
                 }
                 &:hover {
