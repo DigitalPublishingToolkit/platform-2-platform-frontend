@@ -10,7 +10,6 @@
         </div>
 
         <div class="article--data article--data_title" ref="titleEle" v-bind:class="{requireY : paramList.title}" v-bind:style="{height: 'auto'}">
-            <!---->
             <div class="article--data--placeholder">
                 <p>Title</p>
             </div>

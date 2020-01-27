@@ -5,17 +5,91 @@
                 <p>Publisher</p>
             </div>
             <div class="article--data--content article--data--content_publisher">
-                {{articleData.match_publisher}}
+                <strong>{{matchData.publisher}}</strong>, {{getMonthFromString(matchData.mod)}}, <a class="linkToOrigin" v-bind:href="matchData.url" target="_blank">source ↗</a>
             </div>
         </div>
 
         <div class="article--data article--data_title" ref="titleEle" v-bind:class="{requireY : paramList.title}" v-bind:style="{height: 'auto'}">
-            <!---->
             <div class="article--data--placeholder">
                 <p>Title</p>
             </div>
             <div class="article--data--content article--data--content_title">
-                {{articleData.match_title}}
+                {{matchData.title}}
+            </div>
+        </div>
+
+        <div class="article--data article--data_author" v-bind:class="{requireY : paramList.author}">
+            <div class="article--data--placeholder">
+                <p v-if="matchData.author.length > 1">Authors</p>
+                <p v-else>Author</p>
+            </div>
+            <div v-if="matchData.author.length > 0" class="article--data--content article--data--content_authors">
+                <span class="article--data--content_authors_author" v-for="author in matchData.author">{{author}}</span>
+            </div>
+            <div v-else class="article--data--content article--data--content_none">
+                Couldn't find author to scrape…
+            </div>
+        </div>
+
+        <div class="article--data article--data_tags" v-bind:class="{requireY : paramList.tags}">
+            <div class="article--data--placeholder">
+                <p>Tags</p>
+            </div>
+            <div v-if="matchData.tags.length > 0" class="article--data--content article--data--content_tags">
+                <span class="article--data--content_tags_tag" v-for="tag in matchData.tags">{{tag}}</span>
+            </div>
+            <div v-else class="article--data--content article--data--content_none">
+                None found to scrape…
+            </div>
+        </div>
+
+        <div class="article--data article--data_abstract">
+            <div class="article--data--placeholder">
+                <p>Abstract</p>
+            </div>
+            <div v-if="(matchData.abstract.split('').length > 0) && !(matchData.abstract === 'empty')" class="article--data--content article--data--content_abstract">
+                {{matchData.abstract}}
+            </div>
+            <div v-else class="article--data--content article--data--content_none">
+                No abstract found to scrape…
+            </div>
+        </div>
+
+        <div class="article--data article--data_body" v-bind:class="{requireY : paramList.body}">
+            <div class="article--data--placeholder">
+                <p>Body</p>
+            </div>
+            <div class="article--data--content article--data--content_body">
+                <p class="article--data--content_body_paragraph" v-for="item in matchData.body">
+                    {{item}}
+                </p>
+            </div>
+        </div>
+
+        <div v-if="matchData.refs.length > 0" class="article--data article--data_footnotes">
+            <div class="article--data--placeholder">
+                <p>Footnotes</p>
+            </div>
+            <ol class="article--data--content article--data--content_footnotes">
+                <li class="article--data--content_footnotes_footnote" v-for="footnote in matchData.refs">{{footnote.split(/\d\. /g)[1]}}</li>
+            </ol>
+        </div>
+
+        <div v-if="matchData.links.length > 0" class="article--data article--data_references">
+            <div class="article--data--placeholder">
+                <p>References</p>
+            </div>
+            <ul class="article--data--content article--data--content_references">
+                <li class="article--data--content_references_reference" v-for="reference in matchData.links"><a :href="reference">{{reference.split("://")[1]}}</a></li>
+            </ul>
+        </div>
+
+        <div v-if="matchData.images.length > 0" class="article--data article--data_images">
+            <div class="article--data--placeholder">
+                <p>Images</p>
+            </div>
+            <div class="article--data--content article--data--content_images">
+                <img @click="showImageFullscreen($event)" class="article--data--content_images_image" v-for="image in matchData.images" :src="'https://mhp.andrefincato.info/' + image">
             </div>
         </div>
     </div>
@@ -23,6 +97,7 @@
 
 <script>
     import { mapGetters } from 'vuex'
+    import axios from 'axios'
 
     export default {
         name: "article-comp-prematch",
@@ -33,7 +108,28 @@
             "isMatch"
         ],
         data() {
-            return {}
+            return {
+                matchData: {
+                    title: '',
+                    publisher: '',
+                    mod: '',
+                    url: '',
+                    author: [],
+                    tags: [],
+                    body: [],
+                    refs: [],
+                    links: [],
+                    abstract: '',
+                    images: []
+                },
+                daData: {}
+            }
+        },
+        mounted() {
+            axios.get(`https://mhp.andrefincato.info/api/articles/${this.articleData.match_publisher}/${this.articleData.match_slug}`).then((res) => {
+                res.data.body = res.data.body.split('\n');
+                this.matchData = res.data;
+            })
         },
         computed: {
             scrollLock() {
@@ -45,11 +141,18 @@
             matchArticleOnView() {
                 return this.$store.state.articlesStore.matchArticleOnView
             },
+            getPreMatchArticle() {
+                return this.$store.state.articlesStore.preMatchedArticlesData[this.articleInd]
+            }
         },
         methods: {
             ...mapGetters({
                 sourceBodyTextArray: 'articlesStore/sourceBodyAsArray',
             }),
+            preMatchArticle() {
+                console.log(this.getPreMatchArticle)
+                this.daData = this.getPreMatchArticle;
+            },
             getMonthFromString: function(timeStampString){
                 const time = timeStampString.split("-").join(",").split("T").join(",").split(".").join(",").split(",");
                 // console.log(time);

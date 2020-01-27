@@ -39,7 +39,6 @@ const actions = {
     },
     async get_source ({ commit }) {
         await axios.get('https://mhp.andrefincato.info/api/article/random').then((res) => {
-            // console.log(res.data);
             commit('set_sourceAr', res.data)
         })
     },
@@ -52,42 +51,39 @@ const actions = {
     async get_source_openset ({ commit }) {
         await axios.get('https://mhp.andrefincato.info/api/articles/open-set-reader').then((res) => {
             const randomNumber = Math.ceil(Math.random() * res.data.length);
-            commit('set_sourceAr', res.data[randomNumber])
+            commit('set_sourceAr', res.data[randomNumber]);
         })
     },
     async get_source_amateurcities ({ commit }) {
         await axios.get('https://mhp.andrefincato.info/api/articles/amateur-cities').then((res) => {
             const randomNumber = Math.ceil(Math.random() * res.data.length);
-            // console.log(res.data[randomNumber].matches, randomNumber, res.data.length);
             commit('set_sourceAr', res.data[randomNumber])
         })
     },
     async get_match ({ commit, state }) {
         await axios.post('https://mhp.andrefincato.info/api/ask', {
-            article_title: state.sourceArticle.title,
+            article_slug: state.sourceArticle.slug,
             article_publisher: state.sourceArticle.publisher,
-            article_id: state.sourceArticle.id,
             tokens: {
                 title: state.listPar.title,
                 author: state.listPar.author,
                 tags: state.listPar.tags,
                 body: state.listPar.body
-            }
+            },
+            size: 100
         }).then((res) => {
-            // console.log()
             commit('set_matchAr', res.data)
         })
     },
     async confirm_match ({ commit, state }) {
         await axios.post('https://mhp.andrefincato.info/api/send', {
-            input_title: state.sourceArticle.title,
+            input_slug: state.sourceArticle.slug,
             input_publisher: state.sourceArticle.publisher,
-            match_title: state.matchArticles[state.matchArticleOnView].data.title,
+            match_slug: state.matchArticles[state.matchArticleOnView].data.slug,
             match_publisher: state.matchArticles[state.matchArticleOnView].data.publisher,
             score: parseInt(state.matchArticles[state.matchArticleOnView].data.score),
             timestamp: new Date().toISOString()
         }).then((res) => {
-            // console.log(res);
             commit('set_ConfirmMatch', res.data)
             commit('setOnview', state.matchArticleOnView);
             commit('check_MatchValue');
@@ -111,11 +107,9 @@ const mutations = {
         state.indexNum = 1;
     },
     set_loadMatch(state) {
-        // console.log(state.loadingMatches);
         state.loadingMatches = true;
     },
     unSet_loadMatch(state) {
-        // console.log(state.loadingMatches);
         state.loadingMatches = false;
     },
     check_MatchValue(state) {
@@ -127,7 +121,6 @@ const mutations = {
                 newMatches[0].onView = true;
 
                 newMatches.forEach(function(elem, i){
-                    console.log(elem);
                     state.matchArticles.push(newMatches[i]);
                 });
             }
@@ -138,9 +131,12 @@ const mutations = {
         state.matchArticles[state.matchArticleOnView].onView = false;
 
         let confirmedMatch = state.matchArticles.splice(state.matchArticleOnView, 1);
+        let trimmedConfirmedMatch = {
+            match_publisher : confirmedMatch[0].data.publisher,
+            match_slug : confirmedMatch[0].data.slug
+        };
 
-        state.preMatchedArticles.push(confirmedMatch[0]);
-        // console.log(state.preMatchedArticles);
+        state.preMatchedArticles.push(trimmedConfirmedMatch);
         if(state.matchArticleOnView > 0) {
             state.matchArticleOnView -= 1;
         } else {
@@ -159,9 +155,8 @@ const mutations = {
     },
     set_sourceAr (state, data) {
         state.sourceArticle = data;
-        if(data.matches.length > 0) {
-            state.preMatchedArticles = data.matches;
-        }
+        state.preMatchedArticles = data.matches;
+
         if(data.author.length <= 0) {
             state.listPar.author = false;
         }
@@ -196,7 +191,6 @@ const mutations = {
                         data : data[i]
                     };
                 }
-                // console.log(data[i]);
                 state.matchArticles.push(obj);
                 state.indexNum++;
             } else {
@@ -206,7 +200,6 @@ const mutations = {
                     matchIndex: state.indexNum,
                     data : data[i]
                 };
-
                 state.matchPool.push(obj);
                 state.indexNum++;
             }

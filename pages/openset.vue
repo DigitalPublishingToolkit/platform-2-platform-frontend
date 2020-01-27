@@ -31,7 +31,6 @@
             <div v-if="storeMatchArticles().length" class="article--placeholder match-tabs">
                 <div v-for="(match, index) in storeMatchArticles()" class="tab" :class="{active : (matchArticleOnView === index), yesMatch : match.isMatch}" v-bind:data="index" @click="updateView(index); highlightTagsTitle();">
                     <div><p>Match suggestion {{match.matchIndex}}: {{match.data.title}}</p></div><div class="gradient"></div>
-                    <!--                    <p></p>-->
                 </div>
             </div>
             <articleComp v-if="storeMatchArticles().length" v-for="(match, index) in storeMatchArticles()" articleType="match" :key="index" :articleInd="index" :articleData="match.data" :isMatch="match.isMatch" class="article--match article--match--1" v-bind:class="{active : match.onView, yesMatch : match.isMatch}"></articleComp>
@@ -104,9 +103,9 @@
                 toggleOverLap: 'articlesStore/overLapFalse'
             }),
             showTitlePlaceholder(e) {
-                const titleField = document.querySelector('#' + e.currentTarget.id + ' .article--data_title');
-                const sourcePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder p.source');
-                const titlePlaceholder = document.querySelector('#' + e.currentTarget.id + ' .article--placeholder > p.index');
+                const titleField = document.querySelector('#left-column .article--data_title');
+                const sourcePlaceholder = document.querySelector('#left-column .article--placeholder p.source');
+                const titlePlaceholder = document.querySelector('#left-column .article--placeholder p.title');
 
                 if(titleField.getBoundingClientRect().height + titleField.getBoundingClientRect().top <= 34) {
                     sourcePlaceholder.style.opacity = '0';
@@ -398,6 +397,7 @@
         display: none;
         &.active {
             display: block;
+            animation: fadeIn 1s;
         }
     }
 
@@ -405,6 +405,7 @@
         display: none;
         &.active {
             display: block;
+            animation: fadeIn 1s;
         }
     }
 
@@ -412,7 +413,13 @@
         display: none;
         &.active {
             display: block;
+            animation: fadeIn 1s;
         }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
     .article--placeholder {
@@ -435,13 +442,13 @@
             & .tab {
                 position: relative;
                 padding: $spacing/2 ($spacing/2 + 6);
-                flex-grow: 1;
+                flex: 1;
                 background-color: $charcoal;
                 color: $white;
                 border-right: 1px solid rgba(255, 255, 255, 0.2);
                 border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-                /*display: flex;*/
                 overflow:hidden;
+                transition: flex 0.125s linear;
                 & div {
                     overflow:hidden;
                 }
@@ -455,10 +462,13 @@
                 }
                 & p {
                     display: block;
-                    width: 100vw;
+                    overflow:hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    width: 100%;
                 }
                 &_source {
-                    flex-grow: 3;
+                    /*flex-grow: 3;*/
                 }
                 &:last-of-type {
                     border-right: none;
@@ -468,6 +478,7 @@
                     border-bottom: none;
                     color: $black;
                     cursor: default !important;
+                    flex: 5;
                     & p {
                         display: inline-block;
                         &:nth-of-type(2) {
