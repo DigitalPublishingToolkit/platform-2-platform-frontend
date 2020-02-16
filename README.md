@@ -1,13 +1,17 @@
 # Platform 2 Platform
+Matching tool for articles.
 
 ## Feedback
+
 ### Open Set
+
 -[ ] get a lot from open online 2015
 -[ ] an option of suggesting a match by the author might be interesting /feasible?
 -[ ] As soon as I approved several matches, there is a list of them appear on the left window new my article. But when i click on them, i cannot read the these articles neither their titles. Perhaps would be handy to revisit the choice if there are several of them. 
 -[ ] Marked as a match several articles by mistake. Therefore was wondering if it’s possible to come back to the choices and correct the mistake? 
 
 ### Open!
+
 -[ ] unclear how the matching works
 -[ ] almost don’t find any matches
 -[ ] not super convinced about the matches given
@@ -15,6 +19,7 @@
 -[ ] sometimes I know that a specific Open! article that is not in the picture could have been a much better match with a proposed text
 
 ### Amateur Cities
+
 -[ ] get a lot from open online 2015
 -[ ] I noticed is that sometimes I read an article and it’s not a match for what I am reading but I know another article it’s a match for
 -[ ] tempted to search in reverse until I find what I have in mind
@@ -24,6 +29,7 @@
 -[ ] The issue of different sample sizes is something I noticed as well. I don’t think I got any of the Open Set articles recommended
 
 ### Silvio Lorusso
+
 -[x] it would be good to have a call to action when selecting the source, e.g. "Select the source you want to fetch articles from"
 -[x] it might be good to have the panels more recognizable/distinct in terms of Publisher, to immediately understand what one is looking at, e.g. instead of having the Publisher expressed textually, having the logo of it
 -[x] the double scrolling (which is very nice btw) is bit sloppy on Firefox 71.0
