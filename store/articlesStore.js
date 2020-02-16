@@ -225,7 +225,7 @@ const mutations = {
         }
     },
     set_progressAr(state, data) {
-        state.progress = data;
+        state.progress = data.publishers;
     },
     toggleThis(state, param) {
         state.listPar[param] = !state.listPar[param]
