@@ -10,11 +10,7 @@
     export default {
         name: "index",
         layout: "root",
-        head: {
-            meta: [
-                {charset: 'UTF-8'},
-            ]
-        },
+        head: {meta: [{charset: 'UTF-8'}]},
         data() {
             return {
                 firefox: false
@@ -106,23 +102,19 @@
             justify-content: center;
             text-align: center;
             height: 100vh;
-            /*line-height: 100vh;*/
             font-size: 2em;
             background-color: $white;
             border: 1px solid $charcoal;
             box-sizing: border-box;
-
             &:visited {
                 color: $charcoal;
             }
-
             &:hover {
                 & p:first-of-type {
                     text-decoration: underline;
                 }
 
             }
-
             & div {
                 display: block;
                 & p {
@@ -131,7 +123,6 @@
                     text-align: center;
                 }
             }
-
             & span {
                 display: inline-block;
                 font-size: 0.5em;

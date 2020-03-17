@@ -17,6 +17,11 @@ Matching tool for articles.
 - [ ] not super convinced about the matches given
 - [ ] come across the same non-Open! articles again and again
 - [ ] sometimes I know that a specific Open! article that is not in the picture could have been a much better match with a proposed text
+- [ ] In the beginning of the testing period it was different, but now I only get articles proposed from Open Set, not from Amateur Cities
+- [ ] I never get a match proposed based on author, although we have some writers in common
+- [ ] Open Set seems to have much more tags with each article than Open! And the tagging is different. 
+- [ ] Some ‘good' matches are not offered: f.e. an article on walking in Open Set (Rhytms of Presence) with The City as Performative Object: An Essay in Footsteps on Open!. Or an essay on subjective atlases and cartography on Open Set is not matched with Solidarity or Solo, an Atlas project on Open!. Etc..
+
 
 ### Amateur Cities
 

@@ -140,7 +140,6 @@
             }),
             getMonthFromString: function(timeStampString){
                 const time = timeStampString.split("-").join(",").split("T").join(",").split(".").join(",").split(",");
-                // console.log(time);
                 const year = time[0];
                 const monthNum = time[1];
                 const day = time[2];
@@ -166,7 +165,7 @@
                 const modal = document.getElementById("modal");
                 const modalGroup = document.getElementsByClassName("modal--group")[0];
                 let img = event.target.cloneNode(true);
-                img.classList.add("fullscreen")
+                img.classList.add("fullscreen");
                 modal.classList.add("show");
                 modal.classList.remove("hide");
                 modalGroup.append(img);
@@ -190,7 +189,6 @@
             &:hover {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.2);
             }
-
             &--placeholder {
                 font-size: $font-size-s;
                 color: rgba(0, 0, 0, 0.4);
@@ -226,10 +224,7 @@
                 color: rgba(0, 0, 0, 1);
                 margin: $spacing/2 $spacing*1.5 $spacing*1.5 $spacing*1.5;
                 padding: 0 $spacing/3;
-
                 & .linkToOrigin {
-                    /*display: inline-block;*/
-                    /*float: right;*/
                     color: rgba(0, 0, 0, 0.4);
                     text-decoration-line: none;
                     &:hover {
@@ -277,7 +272,6 @@
                     line-height: 1.4em;
                 }
                 &_footnotes {
-                    /*list-style: none;*/
                     padding: 0 0 0 18px;
                     word-break: break-word;
                     &_footnote {
@@ -288,7 +282,6 @@
                     list-style: none;
                     padding: 0;
                     word-break: break-word;
-
                     & a {
                         color: $charcoal;
                         text-decoration-line: none;
@@ -322,7 +315,6 @@
             }
         }
     }
-
     .requireY {
         background-color: rgba(255, 87, 67, 0.05);
         border-bottom: 1px solid rgba(255, 87, 67, 0.5);
@@ -333,14 +325,10 @@
         &:hover {
             border-bottom: 1px solid rgba(255, 87, 67, 1);
         }
-        & .article--data--content_tags_tag {
-            /*background-color: rgba(255, 87, 67, 0.6);*/
-        }
         & .article--data--placeholder {
             color: $red;
         }
     }
-
     .article--matched .requireY {
         background-color: $white;
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -351,14 +339,10 @@
         &:hover {
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
         }
-        & .article--data--content_tags_tag {
-            /*background-color: rgba(255, 87, 67, 0.6);*/
-        }
         & .article--data--placeholder {
             color: rgba(0, 0, 0, 0.4);
         }
     }
-
     .yesMatch .requireY {
         background-color: $white;
         border-bottom: 1px solid rgba(67, 207, 27, 0.5);

@@ -98,7 +98,6 @@
 <script>
     import { mapGetters } from 'vuex'
     import axios from 'axios'
-
     export default {
         name: "article-comp-prematch",
         props: [
@@ -155,11 +154,9 @@
             },
             getMonthFromString: function(timeStampString){
                 const time = timeStampString.split("-").join(",").split("T").join(",").split(".").join(",").split(",");
-                // console.log(time);
                 const year = time[0];
                 const monthNum = time[1];
                 const day = time[2];
-
                 const months = {
                     '01':'Jan',
                     '02':'Feb',
@@ -174,7 +171,6 @@
                     '11':'Nov',
                     '12':'Dec'
                 };
-
                 return day + " " + months[monthNum] + " " + year;
             },
             showImageFullscreen: function(event){
@@ -189,11 +185,9 @@
         }
     }
 </script>
-
 <style lang="scss" scoped>
     @import "../assets/style/global.scss";
     @import "../assets/style/variables.scss";
-
     .article {
         margin-top: 33px;
         &--data {
@@ -205,7 +199,6 @@
             &:hover {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.2);
             }
-
             &--placeholder {
                 font-size: $font-size-s;
                 color: rgba(0, 0, 0, 0.4);
@@ -241,10 +234,7 @@
                 color: rgba(0, 0, 0, 1);
                 margin: $spacing/2 $spacing*1.5 $spacing*1.5 $spacing*1.5;
                 padding: 0 $spacing/3;
-
                 & .linkToOrigin {
-                    /*display: inline-block;*/
-                    /*float: right;*/
                     color: rgba(0, 0, 0, 0.4);
                     text-decoration-line: none;
                     &:hover {
@@ -292,7 +282,6 @@
                     line-height: 1.4em;
                 }
                 &_footnotes {
-                    /*list-style: none;*/
                     padding: 0 0 0 18px;
                     word-break: break-word;
                     &_footnote {
@@ -337,7 +326,6 @@
             }
         }
     }
-
     .requireY {
         background-color: rgba(255, 87, 67, 0.05);
         border-bottom: 1px solid rgba(255, 87, 67, 0.5);
@@ -348,14 +336,10 @@
         &:hover {
             border-bottom: 1px solid rgba(255, 87, 67, 1);
         }
-        & .article--data--content_tags_tag {
-            /*background-color: rgba(255, 87, 67, 0.6);*/
-        }
         & .article--data--placeholder {
             color: $red;
         }
     }
-
     .article--matched .requireY {
         background-color: $white;
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -366,14 +350,10 @@
         &:hover {
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
         }
-        & .article--data--content_tags_tag {
-            /*background-color: rgba(255, 87, 67, 0.6);*/
-        }
         & .article--data--placeholder {
             color: rgba(0, 0, 0, 0.4);
         }
     }
-
     .yesMatch .requireY {
         background-color: $white;
         border-bottom: 1px solid rgba(67, 207, 27, 0.5);

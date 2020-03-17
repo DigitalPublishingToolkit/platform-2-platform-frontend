@@ -12,6 +12,7 @@ dist
 
 # Design files
 design
+feedback.md
 
 # Webstorm
 .idea

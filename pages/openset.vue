@@ -57,11 +57,7 @@
     export default {
         name: "open",
         layout: "home",
-        head: {
-            meta: [
-                {charset: 'UTF-8'},
-            ]
-        },
+        head: {meta: [{charset: 'UTF-8'}]},
         async fetch({store}) {
             await store.dispatch('articlesStore/get_source_openset')
         },
@@ -146,16 +142,13 @@
             },
             highlightTagsTitle() {
                 let allSimilar = document.querySelectorAll('.similar');
-
                 allSimilar.forEach(function(similarNode, ind) {
                     similarNode.classList.remove('similar');
                 });
-
                 const sourceArticle = document.querySelector("#left-column .article--source");
                 const sourceTags = sourceArticle.querySelectorAll('.article--data--content_tags_tag');
                 const activeMatchArticle = document.querySelector(".article--match.active");
                 const activeMatchTags = activeMatchArticle.querySelectorAll('.article--data--content_tags_tag');
-
                 sourceTags.forEach(function(sourceTagNode, sourceInd) {
                     activeMatchTags.forEach(function(matchTagNode, matchInd) {
                         if(sourceTagNode.innerHTML.trim().toLowerCase() === matchTagNode.innerHTML.trim().toLowerCase()) {
@@ -164,9 +157,7 @@
                         }
                     });
                 });
-
                 let allCurrentSpans = document.querySelectorAll('span[matchindex]');
-
                 for(let spanInd = 0; spanInd < allCurrentSpans.length; spanInd++) {
                     if(allCurrentSpans[spanInd].getAttribute('matchindex') === (''+this.matchArticleOnView+'')) {
                         allCurrentSpans[spanInd].classList.add('highlight');
@@ -180,13 +171,11 @@
                             document.getElementById("right-column").scrollTop = e.target.scrollTop;
                             this.scrollBarNow(e.currentTarget.classList[1]);
                             this.scrollBarNow("main_articles_column--right");
-
                             break;
                         case("main_articles_column--right"):
                             document.getElementById("left-column").scrollTop = e.target.scrollTop;
                             this.scrollBarNow(e.currentTarget.classList[1]);
                             this.scrollBarNow("main_articles_column--left");
-
                             break;
                     }
                 } else {
@@ -202,14 +191,12 @@
                 var contentHeight;
                 var viewportHeight;
                 var contentScroll;
-
                 switch(scrollTargetClass) {
                     case("main_articles_column--left"):
                         contentHeight = document.getElementsByClassName("article article--source")[0].clientHeight;
                         viewportHeight = document.getElementById("left-column").clientHeight;
                         contentScroll = document.getElementById("left-column").scrollTop;
                         document.getElementsByClassName("articles_column--left--scrollbar_thumb")[0].style.top = Math.ceil(contentScroll * (viewportHeight / contentHeight)) + "px";
-
                         break;
                     case("main_articles_column--right"):
                         if(this.storeMatchArticles().length > 0) {
@@ -243,9 +230,7 @@
         ready: function(){
             window.addEventListener('resize', function(){
                 this.setScrollBarSource();
-
                 if(this.storeMatchArticles().length > 0) {
-                    // Scroll bars
                     let contentHeight = document.getElementsByClassName("article--match active")[0].clientHeight;
                     let viewportHeight = document.getElementById("right-column").clientHeight;
                     document.getElementsByClassName("articles_column--right--scrollbar_thumb")[0].style.height = viewportHeight * (viewportHeight / contentHeight) + "px";
@@ -254,51 +239,34 @@
         },
         updated: function() {
             this.$nextTick(function () {
-
                 if(this.storeMatchArticles().length > 0) {
-                    // Scroll bars
                     let contentHeight = document.getElementsByClassName("article--match active")[0].clientHeight;
                     let viewportHeight = document.getElementById("right-column").clientHeight;
                     document.getElementsByClassName("articles_column--right--scrollbar_thumb")[0].style.height = viewportHeight * (viewportHeight / contentHeight) + "px";
-
-                    // Find similar tags and title words
                     this.highlightTagsTitle();
-
-                    // console.log(this.findOverlap(), this.matchArticleOnView);
-                    // Set overlap once
                     if(this.findOverlap) {
-
                         let findOverlap = false;
                         let matchArticles = document.querySelectorAll(".article--match");
-
                         const sourceArticle = document.querySelector(".article.article--source");
                         const sourceArticleBody = sourceArticle.querySelector(".article--data--content.article--data--content_body");
                         const sourceArticleTitle = sourceArticle.querySelector(".article--data--content.article--data--content_title");
                         const sourceArticleTitleArr = sourceArticleTitle.innerHTML.split(' ');
                         let sourceArticleTitleArrNew = [];
-
                         sourceArticleTitleArr.forEach(function(item, index) {
                             if(item.length > 2) sourceArticleTitleArrNew.push(item);
                         });
-
                         for(let i = 0; i < this.storeMatchArticles().length; i++) {
                             let article = this.storeMatchArticles()[i].data;
-                            console.table(article.vocabulary);
-
                             let activeMatchArticleBody = matchArticles[i].querySelector(".article--data--content.article--data--content_body");
                             let activeMatchArticleTitle = matchArticles[i].querySelector(".article--data--content.article--data--content_title");
                             let activeMatchArticleTitleArr = activeMatchArticleTitle.innerHTML.split(' ');
                             let activeMatchArticleTitleArrNew = [];
-
                             activeMatchArticleTitleArr.forEach(function(item, index) {
                                 if(item.length > 2) activeMatchArticleTitleArrNew.push(item);
                             });
-
                             if(sourceArticleTitleArrNew.length > 1) {
                                 for(let sourceTitleInd = 0; sourceTitleInd < sourceArticleTitleArrNew.length; sourceTitleInd++) {
-                                    // console.log(sourceArticleTitleArrNew[sourceTitleInd]);
                                     let substring = sourceArticleTitleArrNew[sourceTitleInd];
-
                                     this.findPlainText(activeMatchArticleTitle, substring, function(node, index) {
                                         node.splitText(index + substring.length);
                                         const spanHighlight = document.createElement('span');
@@ -311,7 +279,6 @@
                             if(activeMatchArticleTitleArrNew.length > 1) {
                                 for(let matchTitleInd = 0; matchTitleInd < activeMatchArticleTitleArrNew.length; matchTitleInd++) {
                                     let substring = activeMatchArticleTitleArrNew[matchTitleInd];
-
                                     this.findPlainText(sourceArticleTitle, substring, function(node, index) {
                                         node.splitText(index + substring.length);
                                         const spanHighlight = document.createElement('span');
@@ -321,17 +288,14 @@
                                     });
                                 }
                             }
-
                             if(i > 0) {
                                 findOverlap = true;
                             }
                         }
-
                         if(findOverlap) {
                             this.findOverlap = false;
                             this.toggleOverLap();
                             findOverlap = false;
-
                             this.highlightTagsTitle();
                         }
                     }
@@ -344,16 +308,13 @@
 <style lang="scss" scoped>
     @import "../assets/style/global.scss";
     @import "../assets/style/variables.scss";
-
     .divider_bar {
         position: absolute;
         height: 3px;
         background-color: rgba(49, 49, 49, 1);
     }
-
     .main_articles {
         position: absolute;
-        /*overflow: auto;*/
         top: 3px;
         left: 0;
         right: 0;
@@ -362,7 +323,6 @@
             bottom: 160px;
         }
         background-color: rgba(255, 255, 255, 1);
-
         &_column {
             position: absolute;
             width: 50%;
@@ -376,12 +336,8 @@
             &--right {
                 right: 0;
                 transition: background-color 0.2s ease;
-                &.noArticle {
-                    /*background-color: rgba(0, 0, 0, 0.1);*/
-                }
             }
         }
-
         &::after {
             content: '';
             border-left: 1px solid $charcoal;
@@ -392,7 +348,6 @@
             z-index: 999;
         }
     }
-
     .article--source {
         display: none;
         &.active {
@@ -400,7 +355,6 @@
             animation: fadeIn 1s;
         }
     }
-
     .article--matched {
         display: none;
         &.active {
@@ -408,7 +362,6 @@
             animation: fadeIn 1s;
         }
     }
-
     .article--match {
         display: none;
         &.active {
@@ -416,12 +369,10 @@
             animation: fadeIn 1s;
         }
     }
-
     @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
     }
-
     .article--placeholder {
         font-size: $font-size-s;
         color: rgba(0, 0, 0, 0.6);
@@ -467,9 +418,6 @@
                     text-overflow: ellipsis;
                     width: 100%;
                 }
-                &_source {
-                    /*flex-grow: 3;*/
-                }
                 &:last-of-type {
                     border-right: none;
                 }
@@ -482,8 +430,6 @@
                     & p {
                         display: inline-block;
                         &:nth-of-type(2) {
-                            /*position: absolute;*/
-                            /*left: inherit;*/
                             display: none;
                             opacity: 0;
                             transition: opacity 0.2s linear;
@@ -508,10 +454,7 @@
             float: left;
             opacity: 1;
             transition: opacity 0.2s linear;
-
             &:nth-of-type(2) {
-                /*<!--position: absolute;-->*/
-                /*<!--left: $spacing/2;-->*/
                 display: none;
                 opacity: 0;
                 transition: opacity 0.2s linear;
@@ -546,11 +489,9 @@
             }
         }
     }
-
     .noArticle .article--placeholder {
         background-color: transparent;
     }
-
     .noArticle_placeholder {
         position: absolute;
         width: 50%;
@@ -563,7 +504,6 @@
         text-align: center;
         color: rgba(0,0,0,0.2);
     }
-
     .articles_column--left--scrollbar {
         right: 50vw;
         margin-right: 2px;
@@ -574,7 +514,6 @@
             right: 0;
         }
     }
-
     .articles_column--right--scrollbar {
         left: 50.05vw;
         margin-left: 2px;
@@ -585,7 +524,6 @@
             left: 0;
         }
     }
-
     .article--scrollbar{
         position: fixed;
         top: 5px;
@@ -593,7 +531,6 @@
         width: 4px;
         z-index: 999;
         overflow: hidden;
-
         &_thumb {
             background-color: $charcoal;
             position: absolute;
@@ -604,14 +541,12 @@
             }
         }
     }
-
     .loading_placeholder {
         position: absolute;
         height: 100vh;
         width: 100%;
         display: flex;
         align-items: center;
-
         & .loadingContainer {
             width: 100%;
             display: block;
@@ -628,13 +563,11 @@
             opacity: 0.5;
         }
     }
-
     .loader,.loader:before,.loader:after{
         box-sizing: border-box;
         flex-grow: 0;
         flex-shrink: 0;
     }
-
     @keyframes rect-rotate {
         0% {
             transform: rotate(0);
@@ -643,7 +576,6 @@
             transform: rotate(90deg);
         }
     }
-
     @keyframes fill-rect {
         0%, 50% {
             height: 0px;
@@ -653,7 +585,6 @@
             height: inherit;
         }
     }
-
     .loader.box-rotation {
         transform-origin: center center;
         color: $charcoal;
@@ -665,7 +596,6 @@
         animation: rect-rotate 1s linear infinite;
         margin: auto;
     }
-
     .loader.box-rotation::after {
         content: "";
         height: 0px;
@@ -676,5 +606,4 @@
         opacity: 1;
         animation: fill-rect 1s linear infinite;
     }
-
 </style>

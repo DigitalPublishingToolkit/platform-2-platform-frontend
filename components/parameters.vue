@@ -97,7 +97,6 @@
 <script>
     import { mapMutations } from 'vuex'
     import axios from "axios";
-
     export default {
         name: "parameters",
         computed: {
@@ -168,7 +167,6 @@
                         this.giphySrcBad = response.data.data.images.downsized_large.url;
                     });
                 }
-
                 this.scoreVal = '';
                 this.isMatch = false;
                 this.unSetMatchArticle();
@@ -209,11 +207,9 @@
         },
     }
 </script>
-
 <style lang="scss" scoped>
     @import "../assets/style/global.scss";
     @import "../assets/style/variables.scss";
-
     .parameters {
         font-family: $font-stack-sans;
         font-size: $font-size;
@@ -250,31 +246,25 @@
                 background-color: $red;
             }
         }
-
         & .parameters_column {
             width: 50%;
             display: flex;
             align-items: stretch;
             height: 100%;
-
             &--left {
                 box-sizing: content-box;
                 border-right: 1px solid rgba(0, 0, 0, 1);
                 float: left;
             }
-
             &--right {
                 float: right;
                 margin-left: -1px;
-
                 & .parameters_column--field {
                     flex-grow: 1;
                     border-right: 1px solid rgba(0, 0, 0, 0.1);
-
                     &:last-of-type {
                         border-right: none;
                     }
-
                     & .score_rating {
                         & span {
                             font-size: $font-size-l;
@@ -285,14 +275,12 @@
                             border-radius: 2px;
                         }
                     }
-
                     & .field-user-score-content {
                         margin: 0 0 0 $spacing*1.5;
                     }
                 }
             }
         }
-
         & .placeholder {
             font-size: $font-size-s;
             color: rgba(0, 0, 0, 0.4);
@@ -352,7 +340,6 @@
             }
         }
     }
-
     .parameters_button {
         color: $black;
         font-family: $font-stack-sans;
@@ -379,7 +366,6 @@
             margin-right: 0;
         }
     }
-
     .parameters_matchmaking--yes--inactive {
         color: rgba(0, 0, 0, 0.2);
         border-bottom: 2px solid rgba(0, 0, 0, 0.2);
@@ -389,7 +375,6 @@
             cursor: default;
         }
     }
-
     .parameters_matchmaking--no--inactive {
         margin-left: 0;
         color: rgba(0, 0, 0, 0.2);
@@ -399,7 +384,6 @@
             cursor: default;
         }
     }
-
     .parameters_form--submit--noparams {
         color: rgba(0, 0, 0, 0.2);
         border-bottom: 2px solid rgba(0, 0, 0, 0.2);
@@ -408,33 +392,26 @@
             cursor: default;
         }
     }
-
     .show {
         top: 0;
     }
-
     .hide {
         top: -88px;
     }
-
     .parameters_column--field {
         flex: 1 0;
     }
-
     .divider-slash {
         width: 9px;
         margin: 0 $spacing/2;
     }
-
     .active {
         color: $green;
         border-bottom: 2px solid $green;
     }
-
     .score_rating--noarticle {
         color: rgba(0, 0, 0, 0.2);
     }
-
     .popup-wrapper {
         position: fixed;
         top: 0;
@@ -445,7 +422,6 @@
         display: flex;
         align-items: center;
     }
-
     .popup {
         display: flex;
         padding: $spacing;
@@ -467,5 +443,4 @@
             display: block;
         }
     }
-
 </style>
