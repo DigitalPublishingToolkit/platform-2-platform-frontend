@@ -1,44 +1,31 @@
 # Platform 2 Platform
-Matching tool for articles.
+__A recommendation tool for networks of independent publishers.__ 
 
-## Feedback
+Platform 2 Platform is a tool that combines an algorithmic matching system and human editorial expertise to create relevant recommendations for further reading across a network of independent publishers. This file contains the technical ReadMe for the tool. To learn more about the concept of the tool and its context, please read about the [political urgency](https://networkcultures.org/makingpublic/2020/03/02/clickbait-revisited), [its governance and scalability](https://networkcultures.org/makingpublic/2020/02/06/governance-and-scalability-circles-of-trust-and-federated-platforms), [the origin of the idea](https://networkcultures.org/makingpublic/2018/11/30/platform-2-platform), and [the potential of relationality in independent publishing](https://networkcultures.org/makingpublic/2020/02/19/making-relationships-public) on the blog of the project.
 
-### Open Set
+## Requirements
 
-- [ ] get a lot from open online 2015
-- [ ] an option of suggesting a match by the author might be interesting /feasible?
-- [ ] As soon as I approved several matches, there is a list of them appear on the left window new my article. But when i click on them, i cannot read the these articles neither their titles. Perhaps would be handy to revisit the choice if there are several of them. 
-- [ ] Marked as a match several articles by mistake. Therefore was wondering if it’s possible to come back to the choices and correct the mistake? 
+Make sure your setup meets the following requirements:
+- yarn
+- node >= 8
 
-### Open!
+## Setup
 
-- [ ] unclear how the matching works
-- [ ] almost don’t find any matches
-- [ ] not super convinced about the matches given
-- [ ] come across the same non-Open! articles again and again
-- [ ] sometimes I know that a specific Open! article that is not in the picture could have been a much better match with a proposed text
-- [ ] In the beginning of the testing period it was different, but now I only get articles proposed from Open Set, not from Amateur Cities
-- [ ] I never get a match proposed based on author, although we have some writers in common
-- [ ] Open Set seems to have much more tags with each article than Open! And the tagging is different. 
-- [ ] Some ‘good' matches are not offered: f.e. an article on walking in Open Set (Rhytms of Presence) with The City as Performative Object: An Essay in Footsteps on Open!. Or an essay on subjective atlases and cartography on Open Set is not matched with Solidarity or Solo, an Atlas project on Open!. Etc..
+Install all the required dependencies by running:
 
+`$ yarn install`
 
-### Amateur Cities
+To run locally run:
 
-- [ ] get a lot from open online 2015
-- [ ] I noticed is that sometimes I read an article and it’s not a match for what I am reading but I know another article it’s a match for
-- [ ] tempted to search in reverse until I find what I have in mind
-- [ ] If you get a recommendation that fits something else you know of, that you can actually make that match yourself
-- [ ] had trouble with rating the match. For instance I never used ‘1’ and a match. I would tend to think that it’s not a match then. 
-- [ ] might be helpful especially for external testers to make an explanation on roll over or in the users guide what does it mean that I rate a match with a 5, 3 or 1.
-- [ ] The issue of different sample sizes is something I noticed as well. I don’t think I got any of the Open Set articles recommended
+`$ yarn dev`
 
-### Silvio Lorusso
+For deploying on server run:
 
-- [x] it would be good to have a call to action when selecting the source, e.g. "Select the source you want to fetch articles from"
-- [x] it might be good to have the panels more recognizable/distinct in terms of Publisher, to immediately understand what one is looking at, e.g. instead of having the Publisher expressed textually, having the logo of it
-- [x] the double scrolling (which is very nice btw) is bit sloppy on Firefox 71.0
-- [x] it might be good to have some reference to the article (such as the title), in the Match tab. For example, "Match suggestion 1: On populism"
-- [x] when a match is added and the users clicks on the Match tab all the info (Publisher, Title) are empty
-- [x] it might be good to make more evident when new Match suggestions are added, such as a small animation of the new tabs
-- [ ] it might be interesting to allow the user to compare the ratings added by other users
+`$ nuxt build --spa`
+
+## Development
+
+This project was developed using [NuxtJS](https://nuxtjs.org), [Sass](https://sass-lang.com) and [NodeJS](https://nodejs.org).
+
+## Credits
+This tool was developed as part of the [Making Public!](https://networkcultures.org/makingpublic) research project funded by [SIA RAAK](www.regieorgaan-sia.nl/onderzoeksfinanciering/RAAK-mkb). The tool is the product of a collaboration between [Andre Fincato](https://andrefincato.info) ([Hackers & Designers](https://hackersanddesigners.nl)), Niels Schrader and Martijn de Heer ([Mind Design](www.minddesign.info)), Ania Molenda and Cristina Ampatzidou ([Amateur Cities](https://amateurcities.com)), Jorinde Seijdel ([Open!](https://onlineopen.org)), Irina Shapiro ([Open Set](www.openset.nl)), [Silvio Lorusso](https://silviolorusso.com) ([WdKA](https://www.wdka.nl)) and Inte Gloerich ([Institute of Network Cultures](https://networkcultures.org), [AUAS](https://www.hva.nl)).

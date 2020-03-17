@@ -2,7 +2,7 @@
   "name": "making-it-visible",
   "version": "1.0.1",
   "description": "Comparison tool for publishers, project developed at Institute of Network Cultures.",
-  "author": "apt opt out <message@aptoptout.com>",
+  "author": "Apt Opt Out<message@aptoptout.studio>",
   "private": true,
   "scripts": {
     "dev": "nuxt",
