@@ -1,4 +1,5 @@
 import axios from 'axios'
+import serverBaseUrl from '../config.dp'
 
 const state = () => ({
     scrollLock: true,
@@ -33,35 +34,35 @@ const getters = {
 
 const actions = {
     async get_process ({ commit }) {
-        await axios.get('https://mhp.andrefincato.info/api/articles/progress').then((res) => {
+        await axios.get(`${serverBaseUrl.serverBaseUrl}/api/articles/progress`).then((res) => {
             commit('set_progressAr', res.data)
         })
     },
     async get_source ({ commit }) {
-        await axios.get('https://mhp.andrefincato.info/api/article/random').then((res) => {
+        await axios.get(`${serverBaseUrl.serverBaseUrl}/api/article/random`).then((res) => {
             commit('set_sourceAr', res.data)
         })
     },
     async get_source_open ({ commit }) {
-        await axios.get('https://mhp.andrefincato.info/api/articles/online-open').then((res) => {
+        await axios.get(`${serverBaseUrl.serverBaseUrl}/api/articles/online-open`).then((res) => {
             const randomNumber = Math.ceil(Math.random() * res.data.length);
             commit('set_sourceAr', res.data[randomNumber])
         })
     },
     async get_source_openset ({ commit }) {
-        await axios.get('https://mhp.andrefincato.info/api/articles/open-set-reader').then((res) => {
+        await axios.get(`${serverBaseUrl.serverBaseUrl}/api/articles/open-set-reader`).then((res) => {
             const randomNumber = Math.ceil(Math.random() * res.data.length);
             commit('set_sourceAr', res.data[randomNumber]);
         })
     },
     async get_source_amateurcities ({ commit }) {
-        await axios.get('https://mhp.andrefincato.info/api/articles/amateur-cities').then((res) => {
+        await axios.get(`${serverBaseUrl.serverBaseUrl}/api/articles/amateur-cities`).then((res) => {
             const randomNumber = Math.ceil(Math.random() * res.data.length);
             commit('set_sourceAr', res.data[randomNumber])
         })
     },
     async get_match ({ commit, state }) {
-        await axios.post('https://mhp.andrefincato.info/api/ask', {
+        await axios.post(`${serverBaseUrl.serverBaseUrl}/api/ask`, {
             article_slug: state.sourceArticle.slug,
             article_publisher: state.sourceArticle.publisher,
             tokens: {
@@ -76,7 +77,7 @@ const actions = {
         })
     },
     async confirm_match ({ commit, state }) {
-        await axios.post('https://mhp.andrefincato.info/api/send', {
+        await axios.post(`${serverBaseUrl.serverBaseUrl}/api/send`, {
             input_slug: state.sourceArticle.slug,
             input_publisher: state.sourceArticle.publisher,
             match_slug: state.matchArticles[state.matchArticleOnView].data.slug,

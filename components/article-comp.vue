@@ -103,7 +103,7 @@
                 <p>Images</p>
             </div>
             <div class="article--data--content article--data--content_images">
-                <img @click="showImageFullscreen($event)" class="article--data--content_images_image" v-for="image in articleData.images" :src="'https://mhp.andrefincato.info/' + image">
+                <img @click="showImageFullscreen($event)" class="article--data--content_images_image" v-for="image in articleData.images" :src="'' + baseUrl + '/' + image">
             </div>
         </div>
     </div>
@@ -111,6 +111,7 @@
 
 <script>
     import { mapGetters } from 'vuex'
+    import serverBaseUrl from '../config.dp'
 
     export default {
         name: "article-comp",
@@ -121,7 +122,9 @@
             "isMatch"
         ],
         data() {
-            return {}
+            return {
+                baseUrl: serverBaseUrl.serverBaseUrl
+            }
         },
         computed: {
             scrollLock() {

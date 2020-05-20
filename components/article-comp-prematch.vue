@@ -89,7 +89,7 @@
                 <p>Images</p>
             </div>
             <div class="article--data--content article--data--content_images">
-                <img @click="showImageFullscreen($event)" class="article--data--content_images_image" v-for="image in matchData.images" :src="'https://mhp.andrefincato.info/' + image">
+                <img @click="showImageFullscreen($event)" class="article--data--content_images_image" v-for="image in matchData.images" :src="'' + baseUrl + '/' + image">
             </div>
         </div>
     </div>
@@ -98,6 +98,8 @@
 <script>
     import { mapGetters } from 'vuex'
     import axios from 'axios'
+    import serverBaseUrl from '../config.dp'
+
     export default {
         name: "article-comp-prematch",
         props: [
@@ -121,11 +123,12 @@
                     abstract: '',
                     images: []
                 },
-                daData: {}
+                daData: {},
+                baseUrl: serverBaseUrl.serverBaseUrl
             }
         },
         mounted() {
-            axios.get(`https://mhp.andrefincato.info/api/articles/${this.articleData.match_publisher}/${this.articleData.match_slug}`).then((res) => {
+            axios.get(`${serverBaseUrl.serverBaseUrl}/api/articles/${this.articleData.match_publisher}/${this.articleData.match_slug}`).then((res) => {
                 res.data.body = res.data.body.split('\n');
                 this.matchData = res.data;
             })
@@ -149,7 +152,6 @@
                 sourceBodyTextArray: 'articlesStore/sourceBodyAsArray',
             }),
             preMatchArticle() {
-                console.log(this.getPreMatchArticle)
                 this.daData = this.getPreMatchArticle;
             },
             getMonthFromString: function(timeStampString){
